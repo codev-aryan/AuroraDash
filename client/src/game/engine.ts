@@ -347,17 +347,27 @@ export class GameEngine {
         this.ctx.lineWidth = 1;
         this.ctx.strokeRect(x - 15, y - 20, 30, 20);
       } else {
-        // Tree
+        // Tree (Tiered circular style like the image)
         // Trunk
-        this.ctx.fillStyle = '#451a03'; // Dark brown wood
-        this.ctx.fillRect(x - 4, y - 10, 8, 10);
+        this.ctx.fillStyle = '#451a03'; 
+        this.ctx.fillRect(x - 2, y - 8, 4, 8);
 
-        // Leaves
+        // Circular tiers
         this.ctx.fillStyle = '#064e3b';
+        
+        // Bottom tier
         this.ctx.beginPath();
-        this.ctx.moveTo(x - 15, y - 10);
-        this.ctx.lineTo(x, y - 45);
-        this.ctx.lineTo(x + 15, y - 10);
+        this.ctx.arc(x, y - 12, 12, 0, Math.PI * 2);
+        this.ctx.fill();
+        
+        // Middle tier
+        this.ctx.beginPath();
+        this.ctx.arc(x, y - 22, 9, 0, Math.PI * 2);
+        this.ctx.fill();
+        
+        // Top tier
+        this.ctx.beginPath();
+        this.ctx.arc(x, y - 30, 6, 0, Math.PI * 2);
         this.ctx.fill();
       }
     });
@@ -367,59 +377,41 @@ export class GameEngine {
     this.ctx.translate(this.player.x, this.player.y);
     this.ctx.rotate(this.player.rotation);
     
-    // Sleigh body (detailed)
-    this.ctx.fillStyle = '#ef4444'; // Red
+    // Sleigh base (Thin brown plank like image)
+    this.ctx.fillStyle = '#78350f'; 
     this.ctx.beginPath();
-    this.ctx.roundRect(-22, -8, 44, 18, 4);
+    this.ctx.roundRect(-18, 2, 36, 6, 2);
     this.ctx.fill();
     
-    // Sleigh Back
-    this.ctx.fillStyle = '#991b1b';
-    this.ctx.beginPath();
-    this.ctx.roundRect(-22, -14, 8, 14, 2);
-    this.ctx.fill();
-
-    // Sack of presents
-    this.ctx.fillStyle = '#78350f'; // Brown sack
-    this.ctx.beginPath();
-    this.ctx.arc(-8, -10, 10, 0, Math.PI * 2);
-    this.ctx.fill();
-    this.ctx.strokeStyle = '#451a03';
-    this.ctx.lineWidth = 1;
-    this.ctx.stroke();
-    
-    // Runner (curved)
-    this.ctx.strokeStyle = '#fbbf24'; // Gold
-    this.ctx.lineWidth = 3;
-    this.ctx.lineCap = 'round';
-    this.ctx.beginPath();
-    this.ctx.moveTo(-24, 12);
-    this.ctx.lineTo(20, 12);
-    this.ctx.quadraticCurveTo(28, 12, 28, 4);
-    this.ctx.stroke();
-    
-    // Santa Body
+    // Santa (Sitting directly on sleigh)
+    // Red Body
     this.ctx.fillStyle = '#ef4444';
     this.ctx.beginPath();
-    this.ctx.roundRect(4, -18, 12, 18, 4);
+    this.ctx.arc(0, -2, 10, 0, Math.PI * 2);
     this.ctx.fill();
 
-    // Beard
+    // White trim/beard
     this.ctx.fillStyle = '#fff';
     this.ctx.beginPath();
-    this.ctx.arc(16, -14, 5, 0, Math.PI * 2);
+    this.ctx.arc(4, 0, 6, 0, Math.PI * 2);
+    this.ctx.fill();
+
+    // Face/Eyes
+    this.ctx.fillStyle = '#000';
+    this.ctx.beginPath();
+    this.ctx.arc(6, -2, 1, 0, Math.PI * 2);
     this.ctx.fill();
 
     // Santa Hat
     this.ctx.fillStyle = '#ef4444';
     this.ctx.beginPath();
-    this.ctx.moveTo(6, -18);
-    this.ctx.lineTo(14, -18);
-    this.ctx.lineTo(10, -28);
+    this.ctx.moveTo(-4, -10);
+    this.ctx.lineTo(4, -10);
+    this.ctx.lineTo(0, -22);
     this.ctx.fill();
     this.ctx.fillStyle = '#fff';
     this.ctx.beginPath();
-    this.ctx.arc(10, -28, 3, 0, Math.PI * 2);
+    this.ctx.arc(0, -22, 3, 0, Math.PI * 2);
     this.ctx.fill();
     
     this.ctx.restore();
@@ -452,35 +444,35 @@ export class GameEngine {
     
     const time = Date.now() * 0.001;
     
-    for (let i = 0; i < 3; i++) {
-      const offset = i * 40;
-      const gradient = this.ctx.createLinearGradient(0, offset, 0, offset + 150);
-      
-      if (i === 0) {
-        gradient.addColorStop(0, 'rgba(34, 197, 94, 0.4)'); // Green
-        gradient.addColorStop(1, 'rgba(0,0,0,0)');
-      } else if (i === 1) {
-        gradient.addColorStop(0, 'rgba(168, 85, 247, 0.4)'); // Purple
-        gradient.addColorStop(1, 'rgba(0,0,0,0)');
-      } else {
-        gradient.addColorStop(0, 'rgba(56, 189, 248, 0.4)'); // Cyan
-        gradient.addColorStop(1, 'rgba(0,0,0,0)');
-      }
-      
+    // Multi-layered horizontal bands with soft gradients
+    const bands = [
+      { y: 50, color: '#22c55e', speed: 0.3 }, // Green
+      { y: 100, color: '#a855f7', speed: 0.2 }, // Purple
+      { y: 150, color: '#38bdf8', speed: 0.4 }  // Cyan
+    ];
+
+    bands.forEach((band, i) => {
+      const gradient = this.ctx.createLinearGradient(0, band.y - 40, 0, band.y + 40);
+      gradient.addColorStop(0, 'rgba(0,0,0,0)');
+      gradient.addColorStop(0.5, band.color + '44'); // 0x44 alpha
+      gradient.addColorStop(1, 'rgba(0,0,0,0)');
+
       this.ctx.fillStyle = gradient;
       this.ctx.beginPath();
-      this.ctx.moveTo(0, 0);
       
-      for (let x = 0; x <= this.width; x += 30) {
-        const wave = Math.sin(x * 0.003 + time + i) * 60 + 
-                    Math.sin(x * 0.008 - time * 0.5) * 30;
-        this.ctx.lineTo(x, 100 + wave + i * 20);
+      const waveFreq = 0.002;
+      const waveAmp = 30;
+      
+      this.ctx.moveTo(0, band.y);
+      for (let x = 0; x <= this.width; x += 40) {
+        const y = band.y + Math.sin(x * waveFreq + time * band.speed + i) * waveAmp;
+        this.ctx.lineTo(x, y);
       }
       
-      this.ctx.lineTo(this.width, 0);
-      this.ctx.lineTo(0, 0);
+      this.ctx.lineTo(this.width, band.y + 100);
+      this.ctx.lineTo(0, band.y + 100);
       this.ctx.fill();
-    }
+    });
     
     this.ctx.restore();
   }
