@@ -149,8 +149,9 @@ export class GameEngine {
     const terrainHeight = p1.y + (p2.y - p1.y) * segmentProgress;
     const slope = (p2.y - p1.y) / 50;
     
-    if (this.player.y >= terrainHeight - 10) {
-      this.player.y = terrainHeight - 10;
+    const SLEIGH_HEIGHT = 15;
+    if (this.player.y >= terrainHeight - SLEIGH_HEIGHT) {
+      this.player.y = terrainHeight - SLEIGH_HEIGHT;
       this.player.dy = 0;
       this.player.grounded = true;
       this.player.rotation = Math.atan2(p2.y - p1.y, 50);
@@ -323,17 +324,24 @@ export class GameEngine {
       if (obs.type === 'rock') {
         this.ctx.fillStyle = '#64748b';
         this.ctx.beginPath();
-        this.ctx.moveTo(x - 15, y);
-        this.ctx.lineTo(x, y - 25);
-        this.ctx.lineTo(x + 15, y);
+        this.ctx.rect(x - 15, y - 20, 30, 20);
         this.ctx.fill();
+        // Stone details
+        this.ctx.strokeStyle = '#475569';
+        this.ctx.lineWidth = 1;
+        this.ctx.strokeRect(x - 15, y - 20, 30, 20);
       } else {
         // Tree
+        // Trunk
+        this.ctx.fillStyle = '#451a03'; // Dark brown wood
+        this.ctx.fillRect(x - 4, y - 10, 8, 10);
+
+        // Leaves
         this.ctx.fillStyle = '#064e3b';
         this.ctx.beginPath();
-        this.ctx.moveTo(x - 10, y);
-        this.ctx.lineTo(x, y - 40);
-        this.ctx.lineTo(x + 10, y);
+        this.ctx.moveTo(x - 15, y - 10);
+        this.ctx.lineTo(x, y - 45);
+        this.ctx.lineTo(x + 15, y - 10);
         this.ctx.fill();
       }
     });
@@ -343,30 +351,59 @@ export class GameEngine {
     this.ctx.translate(this.player.x, this.player.y);
     this.ctx.rotate(this.player.rotation);
     
-    // Sleigh body
+    // Sleigh body (detailed)
     this.ctx.fillStyle = '#ef4444'; // Red
     this.ctx.beginPath();
-    this.ctx.roundRect(-20, -10, 40, 20, 5);
+    this.ctx.roundRect(-22, -8, 44, 18, 4);
     this.ctx.fill();
     
-    // Runner
-    this.ctx.strokeStyle = '#fbbf24'; // Gold
-    this.ctx.lineWidth = 3;
+    // Sleigh Back
+    this.ctx.fillStyle = '#991b1b';
     this.ctx.beginPath();
-    this.ctx.moveTo(-20, 10);
-    this.ctx.lineTo(20, 10);
+    this.ctx.roundRect(-22, -14, 8, 14, 2);
+    this.ctx.fill();
+
+    // Sack of presents
+    this.ctx.fillStyle = '#78350f'; // Brown sack
+    this.ctx.beginPath();
+    this.ctx.arc(-8, -10, 10, 0, Math.PI * 2);
+    this.ctx.fill();
+    this.ctx.strokeStyle = '#451a03';
+    this.ctx.lineWidth = 1;
     this.ctx.stroke();
     
-    // Santa Hat (simple)
+    // Runner (curved)
+    this.ctx.strokeStyle = '#fbbf24'; // Gold
+    this.ctx.lineWidth = 3;
+    this.ctx.lineCap = 'round';
+    this.ctx.beginPath();
+    this.ctx.moveTo(-24, 12);
+    this.ctx.lineTo(20, 12);
+    this.ctx.quadraticCurveTo(28, 12, 28, 4);
+    this.ctx.stroke();
+    
+    // Santa Body
     this.ctx.fillStyle = '#ef4444';
     this.ctx.beginPath();
-    this.ctx.moveTo(-5, -15);
-    this.ctx.lineTo(5, -15);
-    this.ctx.lineTo(0, -25);
+    this.ctx.roundRect(4, -18, 12, 18, 4);
+    this.ctx.fill();
+
+    // Beard
+    this.ctx.fillStyle = '#fff';
+    this.ctx.beginPath();
+    this.ctx.arc(16, -14, 5, 0, Math.PI * 2);
+    this.ctx.fill();
+
+    // Santa Hat
+    this.ctx.fillStyle = '#ef4444';
+    this.ctx.beginPath();
+    this.ctx.moveTo(6, -18);
+    this.ctx.lineTo(14, -18);
+    this.ctx.lineTo(10, -28);
     this.ctx.fill();
     this.ctx.fillStyle = '#fff';
     this.ctx.beginPath();
-    this.ctx.arc(0, -25, 3, 0, Math.PI * 2);
+    this.ctx.arc(10, -28, 3, 0, Math.PI * 2);
     this.ctx.fill();
     
     this.ctx.restore();
