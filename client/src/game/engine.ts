@@ -93,8 +93,8 @@ export class GameEngine {
     
     while (x < this.width + 1000) {
       this.terrainPoints.push({ x, y });
-      x += 50; // Segment width
-      y += (Math.random() - 0.5) * 40; // Height variation
+      x += 60; // Slightly wider segments for smoothness
+      y += (Math.random() - 0.5) * 20; // Reduced height variation
       // Clamp height
       if (y < this.height * 0.4) y = this.height * 0.4;
       if (y > this.height * 0.8) y = this.height * 0.8;
@@ -139,22 +139,23 @@ export class GameEngine {
     this.player.y += this.player.dy;
     
     // Terrain collision
-    const segmentIndex = Math.floor((this.player.x + this.state.distance) / 50);
-    const segmentProgress = ((this.player.x + this.state.distance) % 50) / 50;
+    const segmentWidth = 60;
+    const segmentIndex = Math.floor((this.player.x + this.state.distance) / segmentWidth);
+    const segmentProgress = ((this.player.x + this.state.distance) % segmentWidth) / segmentWidth;
     
-    // Safe check for terrain array bounds
-    const p1 = this.terrainPoints[segmentIndex] || { x: 0, y: this.height };
-    const p2 = this.terrainPoints[segmentIndex + 1] || p1;
+    // Find matching terrain points more reliably
+    const p1 = this.terrainPoints.find(p => p.x >= (this.player.x + this.state.distance) - segmentWidth) || { x: 0, y: this.height };
+    const p2 = this.terrainPoints.find(p => p.x > p1.x) || p1;
     
     const terrainHeight = p1.y + (p2.y - p1.y) * segmentProgress;
-    const slope = (p2.y - p1.y) / 50;
+    const slope = (p2.y - p1.y) / segmentWidth;
     
     const SLEIGH_HEIGHT = 15;
     if (this.player.y >= terrainHeight - SLEIGH_HEIGHT) {
       this.player.y = terrainHeight - SLEIGH_HEIGHT;
       this.player.dy = 0;
       this.player.grounded = true;
-      this.player.rotation = Math.atan2(p2.y - p1.y, 50);
+      this.player.rotation = Math.atan2(p2.y - p1.y, segmentWidth);
       
       // Speed based on slope
       this.state.speed += slope * 0.5;
@@ -165,6 +166,12 @@ export class GameEngine {
       this.player.rotation += 0.02; // Rotate while in air
     }
     
+    // Clamp player within screen height to prevent falling off bottom
+    if (this.player.y > this.height - 50) {
+      this.player.y = this.height - 50;
+      this.gameOver();
+    }
+    
     // Move world
     this.state.distance += this.state.speed;
     this.state.score = Math.floor(this.state.distance / 10);
@@ -172,12 +179,12 @@ export class GameEngine {
 
     // Generate new terrain
     const lastPoint = this.terrainPoints[this.terrainPoints.length - 1];
-    if (lastPoint.x - this.state.distance < this.width + 200) {
-      const x = lastPoint.x + 50;
-      let y = lastPoint.y + (Math.random() - 0.5) * 60; // More variation
+    if (lastPoint.x - this.state.distance < this.width + 400) {
+      const x = lastPoint.x + 60;
+      let y = lastPoint.y + (Math.random() - 0.5) * 30; // Smoother variation
       
       // Keep within bounds
-      if (y < this.height * 0.3) y = this.height * 0.3;
+      if (y < this.height * 0.4) y = this.height * 0.4;
       if (y > this.height * 0.8) y = this.height * 0.8;
       
       this.terrainPoints.push({ x, y });
@@ -418,12 +425,12 @@ export class GameEngine {
     });
     this.ctx.globalAlpha = 1;
 
-    // Foreground Snow
-    this.ctx.fillStyle = 'rgba(255, 255, 255, 0.5)';
+    // Foreground Snow (Increased density)
+    this.ctx.fillStyle = 'rgba(255, 255, 255, 0.6)';
     const tTime = Date.now() / 1000;
-    for(let i=0; i<50; i++) {
-      const sx = (i * 40 + tTime * 50) % this.width;
-      const sy = (i * 37 + tTime * 80) % this.height;
+    for(let i=0; i<150; i++) { // Increased from 50 to 150
+      const sx = (i * 123.45 + tTime * 50) % this.width;
+      const sy = (i * 987.65 + tTime * 80) % this.height;
       this.ctx.beginPath();
       this.ctx.arc(sx, sy, 2, 0, Math.PI * 2);
       this.ctx.fill();
