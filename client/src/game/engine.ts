@@ -91,17 +91,17 @@ export class GameEngine {
     let x = 0;
     let y = this.height * 0.6;
     
-    while (x < this.width + 1000) {
+    while (x < this.width + 1200) {
       this.terrainPoints.push({ x, y });
-      x += 60; // Slightly wider segments for smoothness
-      y += (Math.random() - 0.5) * 20; // Reduced height variation
+      x += 60; 
+      y += (Math.random() - 0.5) * 80; // Allow more height variation but we will curve it
       // Clamp height
-      if (y < this.height * 0.4) y = this.height * 0.4;
+      if (y < this.height * 0.3) y = this.height * 0.3;
       if (y > this.height * 0.8) y = this.height * 0.8;
     }
     
     // Initial player position
-    this.player.y = this.terrainPoints[4].y - 20;
+    this.player.y = this.getTerrainHeightAt(this.player.x) - 15;
   }
 
   start() {
@@ -181,10 +181,10 @@ export class GameEngine {
     const lastPoint = this.terrainPoints[this.terrainPoints.length - 1];
     if (lastPoint.x - this.state.distance < this.width + 400) {
       const x = lastPoint.x + 60;
-      let y = lastPoint.y + (Math.random() - 0.5) * 30; // Smoother variation
+      let y = lastPoint.y + (Math.random() - 0.5) * 120; // Natural heights
       
       // Keep within bounds
-      if (y < this.height * 0.4) y = this.height * 0.4;
+      if (y < this.height * 0.3) y = this.height * 0.3;
       if (y > this.height * 0.8) y = this.height * 0.8;
       
       this.terrainPoints.push({ x, y });
@@ -309,11 +309,20 @@ export class GameEngine {
     // Terrain
     this.ctx.beginPath();
     if (this.terrainPoints.length > 0) {
-      this.ctx.moveTo(this.terrainPoints[0].x - this.state.distance, this.height);
-      this.terrainPoints.forEach(p => {
-        this.ctx.lineTo(p.x - this.state.distance, p.y);
-      });
-      this.ctx.lineTo(this.terrainPoints[this.terrainPoints.length - 1].x - this.state.distance, this.height);
+      const first = this.terrainPoints[0];
+      this.ctx.moveTo(first.x - this.state.distance, this.height);
+      this.ctx.lineTo(first.x - this.state.distance, first.y);
+      
+      for (let i = 0; i < this.terrainPoints.length - 1; i++) {
+        const p1 = this.terrainPoints[i];
+        const p2 = this.terrainPoints[i + 1];
+        const xc = (p1.x + p2.x) / 2;
+        const yc = (p1.y + p2.y) / 2;
+        this.ctx.quadraticCurveTo(p1.x - this.state.distance, p1.y, xc - this.state.distance, yc);
+      }
+      
+      const last = this.terrainPoints[this.terrainPoints.length - 1];
+      this.ctx.lineTo(last.x - this.state.distance, this.height);
     }
     this.ctx.fillStyle = '#f8fafc'; // Snow white
     this.ctx.fill();
@@ -442,25 +451,36 @@ export class GameEngine {
     this.ctx.globalAlpha = alpha;
     
     const time = Date.now() * 0.001;
-    const gradient = this.ctx.createLinearGradient(0, 0, this.width, 0);
     
-    gradient.addColorStop(0, 'rgba(0,0,0,0)');
-    gradient.addColorStop(0.2, 'rgba(56, 189, 248, 0.3)'); // Cyan
-    gradient.addColorStop(0.5, 'rgba(168, 85, 247, 0.3)'); // Purple
-    gradient.addColorStop(0.8, 'rgba(34, 197, 94, 0.3)');  // Green
-    gradient.addColorStop(1, 'rgba(0,0,0,0)');
-    
-    this.ctx.fillStyle = gradient;
-    
-    this.ctx.beginPath();
-    this.ctx.moveTo(0, 100);
-    for (let x = 0; x <= this.width; x += 50) {
-      const y = 100 + Math.sin(x * 0.005 + time) * 50 + Math.sin(x * 0.01 - time * 0.5) * 30;
-      this.ctx.lineTo(x, y);
+    for (let i = 0; i < 3; i++) {
+      const offset = i * 40;
+      const gradient = this.ctx.createLinearGradient(0, offset, 0, offset + 150);
+      
+      if (i === 0) {
+        gradient.addColorStop(0, 'rgba(34, 197, 94, 0.4)'); // Green
+        gradient.addColorStop(1, 'rgba(0,0,0,0)');
+      } else if (i === 1) {
+        gradient.addColorStop(0, 'rgba(168, 85, 247, 0.4)'); // Purple
+        gradient.addColorStop(1, 'rgba(0,0,0,0)');
+      } else {
+        gradient.addColorStop(0, 'rgba(56, 189, 248, 0.4)'); // Cyan
+        gradient.addColorStop(1, 'rgba(0,0,0,0)');
+      }
+      
+      this.ctx.fillStyle = gradient;
+      this.ctx.beginPath();
+      this.ctx.moveTo(0, 0);
+      
+      for (let x = 0; x <= this.width; x += 30) {
+        const wave = Math.sin(x * 0.003 + time + i) * 60 + 
+                    Math.sin(x * 0.008 - time * 0.5) * 30;
+        this.ctx.lineTo(x, 100 + wave + i * 20);
+      }
+      
+      this.ctx.lineTo(this.width, 0);
+      this.ctx.lineTo(0, 0);
+      this.ctx.fill();
     }
-    this.ctx.lineTo(this.width, 0);
-    this.ctx.lineTo(0, 0);
-    this.ctx.fill();
     
     this.ctx.restore();
   }

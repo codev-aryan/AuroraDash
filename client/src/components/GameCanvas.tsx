@@ -147,50 +147,13 @@ export default function GameCanvas() {
                 <p className="text-white/60">meters traveled</p>
               </div>
 
-              <div className="space-y-4 mb-8">
-                <input
-                  type="text"
-                  placeholder="Enter your name"
-                  value={playerName}
-                  onChange={(e) => setPlayerName(e.target.value)}
-                  className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white placeholder:text-white/30 focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-all text-center text-lg"
-                  maxLength={15}
-                />
-                <Button 
-                  onClick={handleScoreSubmit}
-                  disabled={isSubmitting || !playerName}
-                  className="w-full py-6 text-lg font-bold bg-white/10 hover:bg-white/20 text-white"
-                >
-                  {isSubmitting ? "Saving..." : "Save Score"}
-                </Button>
-              </div>
-
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 gap-4">
                 <Button 
                   onClick={startGame}
-                  className="col-span-2 py-6 text-lg font-bold bg-gradient-to-r from-primary to-purple-500 hover:scale-[1.02] transition-transform text-primary-foreground"
+                  className="py-6 text-lg font-bold bg-gradient-to-r from-primary to-purple-500 hover:scale-[1.02] transition-transform text-primary-foreground"
                 >
                   <RotateCcw className="mr-2" /> Play Again
                 </Button>
-              </div>
-
-              {/* High Scores Mini List */}
-              <div className="mt-8 pt-8 border-t border-white/10">
-                <div className="flex items-center gap-2 mb-4 text-white/80">
-                  <Trophy className="w-4 h-4 text-yellow-400" />
-                  <span className="font-bold text-sm uppercase tracking-wider">Top Adventurers</span>
-                </div>
-                <div className="space-y-2">
-                  {highScores?.slice(0, 3).map((s, i) => (
-                    <div key={i} className="flex justify-between text-sm text-white/60">
-                      <span>{i+1}. {s.playerName}</span>
-                      <span className="font-mono text-primary">{s.score}m</span>
-                    </div>
-                  ))}
-                  {(!highScores || highScores.length === 0) && (
-                    <p className="text-xs text-white/30 italic">No scores yet. Be the first!</p>
-                  )}
-                </div>
               </div>
             </div>
           </motion.div>
