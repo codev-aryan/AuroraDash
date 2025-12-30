@@ -114,7 +114,7 @@ export default function GameCanvas() {
           >
             <div className="text-center space-y-8 p-8 max-w-md w-full">
               <h1 className="text-6xl md:text-8xl font-display text-transparent bg-clip-text bg-gradient-to-br from-white via-primary to-purple-400 drop-shadow-lg filter">
-                Santa's<br/>Adventure
+                AuroraDash
               </h1>
               
               <div className="bg-card/50 border border-white/10 p-6 rounded-2xl backdrop-blur-md shadow-2xl">

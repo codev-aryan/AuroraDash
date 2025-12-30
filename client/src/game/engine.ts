@@ -123,6 +123,10 @@ export class GameEngine {
   jump() {
     if (this.player.grounded) {
       this.player.dy = this.JUMP_FORCE;
+      // Add forward momentum on jump
+      this.state.speed += 2;
+      if (this.state.speed > this.MAX_SPEED) this.state.speed = this.MAX_SPEED;
+      
       this.player.grounded = false;
       this.createParticles(this.player.x, this.player.y + 10, 10, '#fff');
     }
@@ -190,9 +194,10 @@ export class GameEngine {
       this.terrainPoints.push({ x, y });
       
       // Chance to spawn obstacle
-      if (Math.random() < 0.1 && this.state.distance > 1000) {
+      // Spawning earlier: check distance > 300 (approx 3-4 seconds)
+      if (Math.random() < 0.1 && this.state.distance > 300) {
         this.obstacles.push({ 
-          x, 
+          x: x, 
           type: Math.random() > 0.5 ? 'rock' : 'tree' 
         });
       }
@@ -340,34 +345,40 @@ export class GameEngine {
       if (obs.type === 'rock') {
         this.ctx.fillStyle = '#64748b';
         this.ctx.beginPath();
-        this.ctx.rect(x - 15, y - 20, 30, 20);
+        // More "stone" like shape (trapezoid/irregular)
+        this.ctx.moveTo(x - 20, y);
+        this.ctx.lineTo(x - 15, y - 18);
+        this.ctx.lineTo(x + 15, y - 22);
+        this.ctx.lineTo(x + 22, y);
+        this.ctx.closePath();
         this.ctx.fill();
-        // Stone details
-        this.ctx.strokeStyle = '#475569';
-        this.ctx.lineWidth = 1;
-        this.ctx.strokeRect(x - 15, y - 20, 30, 20);
+        
+        // Stone details (cracks/shadows)
+        this.ctx.strokeStyle = 'rgba(0,0,0,0.2)';
+        this.ctx.lineWidth = 2;
+        this.ctx.stroke();
       } else {
         // Tree (Tiered circular style like the image)
-        // Trunk
+        // Trunk - moved slightly up to be visible in snow
         this.ctx.fillStyle = '#451a03'; 
-        this.ctx.fillRect(x - 2, y - 8, 4, 8);
+        this.ctx.fillRect(x - 3, y - 15, 6, 15);
 
         // Circular tiers
         this.ctx.fillStyle = '#064e3b';
         
         // Bottom tier
         this.ctx.beginPath();
-        this.ctx.arc(x, y - 12, 12, 0, Math.PI * 2);
+        this.ctx.arc(x, y - 18, 12, 0, Math.PI * 2);
         this.ctx.fill();
         
         // Middle tier
         this.ctx.beginPath();
-        this.ctx.arc(x, y - 22, 9, 0, Math.PI * 2);
+        this.ctx.arc(x, y - 28, 9, 0, Math.PI * 2);
         this.ctx.fill();
         
         // Top tier
         this.ctx.beginPath();
-        this.ctx.arc(x, y - 30, 6, 0, Math.PI * 2);
+        this.ctx.arc(x, y - 36, 6, 0, Math.PI * 2);
         this.ctx.fill();
       }
     });
@@ -377,41 +388,52 @@ export class GameEngine {
     this.ctx.translate(this.player.x, this.player.y);
     this.ctx.rotate(this.player.rotation);
     
-    // Sleigh base (Thin brown plank like image)
+    // Sleigh base (Thin brown plank)
     this.ctx.fillStyle = '#78350f'; 
     this.ctx.beginPath();
-    this.ctx.roundRect(-18, 2, 36, 6, 2);
+    this.ctx.roundRect(-20, 0, 40, 4, 2);
     this.ctx.fill();
     
-    // Santa (Sitting directly on sleigh)
-    // Red Body
+    // Santa Body (Tilted forward slightly)
     this.ctx.fillStyle = '#ef4444';
     this.ctx.beginPath();
-    this.ctx.arc(0, -2, 10, 0, Math.PI * 2);
+    this.ctx.ellipse(-2, -8, 10, 12, 0.2, 0, Math.PI * 2);
     this.ctx.fill();
 
-    // White trim/beard
+    // Belt
+    this.ctx.fillStyle = '#000';
+    this.ctx.fillRect(-10, -8, 18, 3);
+
+    // Beard (Proper fluffy beard)
     this.ctx.fillStyle = '#fff';
     this.ctx.beginPath();
-    this.ctx.arc(4, 0, 6, 0, Math.PI * 2);
+    this.ctx.arc(8, -10, 6, 0, Math.PI * 2);
+    this.ctx.arc(6, -6, 5, 0, Math.PI * 2);
+    this.ctx.arc(10, -6, 4, 0, Math.PI * 2);
     this.ctx.fill();
 
-    // Face/Eyes
+    // Face
+    this.ctx.fillStyle = '#fecaca';
+    this.ctx.beginPath();
+    this.ctx.arc(8, -14, 5, 0, Math.PI * 2);
+    this.ctx.fill();
+
+    // Eyes
     this.ctx.fillStyle = '#000';
     this.ctx.beginPath();
-    this.ctx.arc(6, -2, 1, 0, Math.PI * 2);
+    this.ctx.arc(10, -15, 1, 0, Math.PI * 2);
     this.ctx.fill();
 
-    // Santa Hat
+    // Proper Hat
     this.ctx.fillStyle = '#ef4444';
     this.ctx.beginPath();
-    this.ctx.moveTo(-4, -10);
-    this.ctx.lineTo(4, -10);
-    this.ctx.lineTo(0, -22);
+    this.ctx.moveTo(4, -18);
+    this.ctx.lineTo(12, -18);
+    this.ctx.quadraticCurveTo(8, -28, 0, -26);
     this.ctx.fill();
     this.ctx.fillStyle = '#fff';
     this.ctx.beginPath();
-    this.ctx.arc(0, -22, 3, 0, Math.PI * 2);
+    this.ctx.arc(0, -26, 3, 0, Math.PI * 2);
     this.ctx.fill();
     
     this.ctx.restore();
