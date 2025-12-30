@@ -35,8 +35,8 @@ export class GameEngine {
   readonly GRAVITY = 0.6;
   readonly FRICTION = 0.99;
   readonly BOOST = 0.2;
-  readonly MAX_SPEED = 12; // Reduced from 15 to prevent excessive speed
-  readonly JUMP_FORCE = -10; // Reduced from -12 for better control
+  readonly MAX_SPEED = 12; 
+  readonly JUMP_FORCE = -11; // Slightly increased from -10 for better push
   
   // Entities
   player: { x: number; y: number; dy: number; rotation: number; grounded: boolean } = {
@@ -161,9 +161,9 @@ export class GameEngine {
       this.player.grounded = true;
       this.player.rotation = Math.atan2(p2.y - p1.y, segmentWidth);
       
-      // Speed based on slope
-      this.state.speed += slope * 0.5;
-      if (this.state.speed < 2) this.state.speed = 2;
+      // Speed based on slope - reduced variation
+      this.state.speed += slope * 0.3;
+      if (this.state.speed < 4) this.state.speed = 4;
       if (this.state.speed > this.MAX_SPEED) this.state.speed = this.MAX_SPEED;
     } else {
       this.player.grounded = false;

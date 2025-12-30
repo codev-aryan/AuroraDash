@@ -2,8 +2,7 @@ import { useEffect, useRef, useState } from 'react';
 import { GameEngine } from '@/game/engine';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Button } from '@/components/ui/button';
-import { useSubmitScore, useScores } from '@/hooks/use-scores';
-import { Volume2, VolumeX, Trophy, Play, RotateCcw } from 'lucide-react';
+import { Volume2, VolumeX, Play, RotateCcw } from 'lucide-react';
 
 export default function GameCanvas() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
