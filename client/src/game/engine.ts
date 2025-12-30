@@ -195,7 +195,11 @@ export class GameEngine {
       
       // Chance to spawn obstacle
       // Spawning earlier: check distance > 300 (approx 3-4 seconds)
-      if (Math.random() < 0.1 && this.state.distance > 300) {
+      // Added minimum spacing: 400 pixels between obstacles
+      const lastObs = this.obstacles[this.obstacles.length - 1];
+      const spacing = lastObs ? x - lastObs.x : 1000;
+      
+      if (Math.random() < 0.15 && this.state.distance > 300 && spacing > 400) {
         this.obstacles.push({ 
           x: x, 
           type: Math.random() > 0.5 ? 'rock' : 'tree' 
@@ -306,10 +310,10 @@ export class GameEngine {
     });
 
     // Aurora (Procedural)
-    if (t < 0.5) { // Only at night
-      const alpha = (0.5 - t) * 0.5;
-      this.drawAurora(alpha);
-    }
+    // Removed t < 0.5 check to ensure it's always visible if needed, 
+    // or adjusted to be more prominent
+    const auroraAlpha = 0.4; 
+    this.drawAurora(auroraAlpha);
 
     // Terrain
     this.ctx.beginPath();

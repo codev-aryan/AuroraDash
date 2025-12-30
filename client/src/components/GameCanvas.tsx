@@ -31,11 +31,12 @@ export default function GameCanvas() {
       gain.gain.setValueAtTime(0.1, ctx.currentTime);
       gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.2);
     } else {
-      osc.type = 'sawtooth';
-      osc.frequency.setValueAtTime(100, ctx.currentTime);
-      osc.frequency.exponentialRampToValueAtTime(40, ctx.currentTime + 0.2);
-      gain.gain.setValueAtTime(0.2, ctx.currentTime);
-      gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.3);
+      // Zen-like chime for crash/reset
+      osc.type = 'sine';
+      osc.frequency.setValueAtTime(523.25, ctx.currentTime); // C5
+      osc.frequency.exponentialRampToValueAtTime(261.63, ctx.currentTime + 0.5); // Slide down to C4
+      gain.gain.setValueAtTime(0.1, ctx.currentTime);
+      gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.8);
     }
     
     osc.connect(gain);
@@ -70,12 +71,14 @@ export default function GameCanvas() {
     const scheduleMusic = () => {
       const notes = [261.63, 329.63, 392.00, 523.25]; // C4, E4, G4, C5
       let nextTime = ctx.currentTime;
-      setInterval(() => {
+      
+      const playLoop = () => {
         if (!isMuted && gameState === 'playing') {
-          playNote(notes[Math.floor(Math.random() * notes.length)], nextTime);
-          nextTime += 2;
+          playNote(notes[Math.floor(Math.random() * notes.length)], ctx.currentTime);
         }
-      }, 2000);
+        setTimeout(playLoop, 2000);
+      };
+      playLoop();
     };
     scheduleMusic();
   };
@@ -119,6 +122,7 @@ export default function GameCanvas() {
           // Optional: Press space to start
         } else if (gameState === 'playing') {
           engineRef.current?.jump();
+          playSound('jump');
         }
       }
     };
@@ -144,11 +148,6 @@ export default function GameCanvas() {
     engineRef.current?.start();
     setGameState('playing');
     setScore(0);
-  };
-
-  const handleScoreSubmit = () => {
-    if (!playerName.trim()) return;
-    submitScore({ playerName, score });
   };
 
   return (
