@@ -13,10 +13,72 @@ export default function GameCanvas() {
   const [gameState, setGameState] = useState<'start' | 'playing' | 'gameover'>('start');
   const [score, setScore] = useState(0);
   const [isMuted, setIsMuted] = useState(false);
-  const [playerName, setPlayerName] = useState('');
-  
-  const { mutate: submitScore, isPending: isSubmitting } = useSubmitScore();
-  const { data: highScores } = useScores();
+  const audioContextRef = useRef<AudioContext | null>(null);
+  const bgMusicRef = useRef<OscillatorNode | null>(null);
+
+  // Audio System
+  const playSound = (type: 'jump' | 'hit') => {
+    if (isMuted) return;
+    if (!audioContextRef.current) audioContextRef.current = new (window.AudioContext || (window as any).webkitAudioContext)();
+    const ctx = audioContextRef.current;
+    const osc = ctx.createOscillator();
+    const gain = ctx.createGain();
+    
+    if (type === 'jump') {
+      osc.type = 'triangle';
+      osc.frequency.setValueAtTime(150, ctx.currentTime);
+      osc.frequency.exponentialRampToValueAtTime(400, ctx.currentTime + 0.1);
+      gain.gain.setValueAtTime(0.1, ctx.currentTime);
+      gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.2);
+    } else {
+      osc.type = 'sawtooth';
+      osc.frequency.setValueAtTime(100, ctx.currentTime);
+      osc.frequency.exponentialRampToValueAtTime(40, ctx.currentTime + 0.2);
+      gain.gain.setValueAtTime(0.2, ctx.currentTime);
+      gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.3);
+    }
+    
+    osc.connect(gain);
+    gain.connect(ctx.destination);
+    osc.start();
+    osc.stop(ctx.currentTime + 0.3);
+  };
+
+  const startBackgroundMusic = () => {
+    if (!audioContextRef.current) audioContextRef.current = new (window.AudioContext || (window as any).webkitAudioContext)();
+    const ctx = audioContextRef.current;
+    
+    // Simple synth pad for background
+    const masterGain = ctx.createGain();
+    masterGain.gain.setValueAtTime(0.02, ctx.currentTime);
+    masterGain.connect(ctx.destination);
+    
+    const playNote = (freq: number, startTime: number) => {
+      const osc = ctx.createOscillator();
+      const g = ctx.createGain();
+      osc.type = 'sine';
+      osc.frequency.setValueAtTime(freq, startTime);
+      g.gain.setValueAtTime(0, startTime);
+      g.gain.linearRampToValueAtTime(0.5, startTime + 2);
+      g.gain.linearRampToValueAtTime(0, startTime + 4);
+      osc.connect(g);
+      g.connect(masterGain);
+      osc.start(startTime);
+      osc.stop(startTime + 4);
+    };
+
+    const scheduleMusic = () => {
+      const notes = [261.63, 329.63, 392.00, 523.25]; // C4, E4, G4, C5
+      let nextTime = ctx.currentTime;
+      setInterval(() => {
+        if (!isMuted && gameState === 'playing') {
+          playNote(notes[Math.floor(Math.random() * notes.length)], nextTime);
+          nextTime += 2;
+        }
+      }, 2000);
+    };
+    scheduleMusic();
+  };
 
   // Initialize Engine
   useEffect(() => {
@@ -29,6 +91,7 @@ export default function GameCanvas() {
     engine.onGameOver = (finalScore) => {
       setScore(finalScore);
       setGameState('gameover');
+      playSound('hit');
     };
 
     const animate = () => {
@@ -61,7 +124,10 @@ export default function GameCanvas() {
     };
     
     const handleMouseDown = () => {
-      if (gameState === 'playing') engineRef.current?.jump();
+      if (gameState === 'playing') {
+        engineRef.current?.jump();
+        playSound('jump');
+      }
     };
 
     window.addEventListener('keydown', handleKeyDown);
@@ -74,6 +140,7 @@ export default function GameCanvas() {
   }, [gameState]);
 
   const startGame = () => {
+    if (!audioContextRef.current) startBackgroundMusic();
     engineRef.current?.start();
     setGameState('playing');
     setScore(0);

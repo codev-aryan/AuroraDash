@@ -35,8 +35,8 @@ export class GameEngine {
   readonly GRAVITY = 0.6;
   readonly FRICTION = 0.99;
   readonly BOOST = 0.2;
-  readonly MAX_SPEED = 15;
-  readonly JUMP_FORCE = -12;
+  readonly MAX_SPEED = 12; // Reduced from 15 to prevent excessive speed
+  readonly JUMP_FORCE = -10; // Reduced from -12 for better control
   
   // Entities
   player: { x: number; y: number; dy: number; rotation: number; grounded: boolean } = {
@@ -123,8 +123,8 @@ export class GameEngine {
   jump() {
     if (this.player.grounded) {
       this.player.dy = this.JUMP_FORCE;
-      // Add forward momentum on jump
-      this.state.speed += 2;
+      // Reduced forward momentum on jump for better control
+      this.state.speed += 1;
       if (this.state.speed > this.MAX_SPEED) this.state.speed = this.MAX_SPEED;
       
       this.player.grounded = false;
