@@ -143,8 +143,8 @@ export class GameEngine {
 
     if (this.inputBuffer > 0) this.inputBuffer--;
     
-    // Auto-trigger jump from buffer
-    if (this.player.grounded && (this.keys.space || this.inputBuffer > 0)) {
+    // Auto-trigger jump from buffer - bypass grounding check if we have enough margin
+    if ((this.player.grounded || this.getTerrainHeightAt(this.player.x) - (this.player.y + 15) < 5) && (this.keys.space || this.inputBuffer > 0)) {
       this.jump();
     }
 

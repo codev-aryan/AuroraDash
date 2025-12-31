@@ -48,33 +48,44 @@ export default function GameCanvas() {
     if (!audioContextRef.current) audioContextRef.current = new (window.AudioContext || (window as any).webkitAudioContext)();
     const ctx = audioContextRef.current;
     
-    // Simple synth pad for background
+    // Richer synth pad for background
     const masterGain = ctx.createGain();
-    masterGain.gain.setValueAtTime(0.02, ctx.currentTime);
+    masterGain.gain.setValueAtTime(0.04, ctx.currentTime);
     masterGain.connect(ctx.destination);
     
-    const playNote = (freq: number, startTime: number) => {
+    const playNote = (freq: number, startTime: number, duration: number = 6) => {
       const osc = ctx.createOscillator();
       const g = ctx.createGain();
-      osc.type = 'sine';
+      osc.type = 'triangle';
       osc.frequency.setValueAtTime(freq, startTime);
+      
+      // Soft envelope
       g.gain.setValueAtTime(0, startTime);
-      g.gain.linearRampToValueAtTime(0.5, startTime + 2);
-      g.gain.linearRampToValueAtTime(0, startTime + 4);
+      g.gain.linearRampToValueAtTime(0.3, startTime + duration * 0.4);
+      g.gain.linearRampToValueAtTime(0, startTime + duration);
+      
       osc.connect(g);
       g.connect(masterGain);
       osc.start(startTime);
-      osc.stop(startTime + 4);
+      osc.stop(startTime + duration);
     };
 
     const scheduleMusic = () => {
-      const notes = [261.63, 329.63, 392.00, 523.25]; // C4, E4, G4, C5
+      const scales = [
+        [261.63, 329.63, 392.00, 523.25], // C Major
+        [349.23, 440.00, 523.25, 698.46], // F Major
+        [392.00, 493.88, 587.33, 783.99]  // G Major
+      ];
       
       const playLoop = () => {
         if (!isMuted && gameState !== 'gameover') {
-          playNote(notes[Math.floor(Math.random() * notes.length)], ctx.currentTime);
+          const scale = scales[Math.floor(Date.now() / 10000) % scales.length];
+          const note = scale[Math.floor(Math.random() * scale.length)];
+          playNote(note, ctx.currentTime);
+          // Add a low fifth for depth
+          playNote(note * 0.66, ctx.currentTime, 8);
         }
-        setTimeout(playLoop, 3000);
+        setTimeout(playLoop, 4000);
       };
       playLoop();
     };
@@ -84,6 +95,9 @@ export default function GameCanvas() {
   // Initialize Engine
   useEffect(() => {
     if (!canvasRef.current) return;
+    
+    // Start music early
+    if (!audioContextRef.current) startBackgroundMusic();
     
     const engine = new GameEngine(canvasRef.current);
     engineRef.current = engine;
