@@ -91,15 +91,15 @@ export class GameEngine {
   generateInitialTerrain() {
     this.terrainPoints = [];
     let x = 0;
-    let y = this.height * 0.6;
+    let y = this.height * 0.75; // Lowered from 0.6 to show more sky
     
     while (x < this.width + 1200) {
       this.terrainPoints.push({ x, y });
       x += 60; 
-      y += (Math.random() - 0.5) * 80; // Allow more height variation but we will curve it
-      // Clamp height
-      if (y < this.height * 0.3) y = this.height * 0.3;
-      if (y > this.height * 0.8) y = this.height * 0.8;
+      y += (Math.random() - 0.5) * 60; // Reduced variation slightly
+      // Clamp height - lowered range
+      if (y < this.height * 0.5) y = this.height * 0.5;
+      if (y > this.height * 0.9) y = this.height * 0.9;
     }
     
     // Initial player position
@@ -123,14 +123,11 @@ export class GameEngine {
   }
 
   jump() {
-    if (this.player.grounded || this.inputBuffer > 0) {
-      this.player.dy = this.JUMP_FORCE;
-      // Minimal speed boost on jump
-      this.state.speed += 0.1;
-      if (this.state.speed > this.MAX_SPEED) this.state.speed = this.MAX_SPEED;
-      
+    // Only allow jump if grounded or buffer is active
+    if (this.player.grounded) {
+      this.player.dy = this.JUMP_FORCE; // Uniform force
       this.player.grounded = false;
-      this.inputBuffer = 0; // Clear buffer
+      this.inputBuffer = 0;
       this.createParticles(this.player.x, this.player.y + 10, 10, '#fff');
     } else {
       // Buffer the jump if not grounded
@@ -173,7 +170,7 @@ export class GameEngine {
       this.player.rotation = Math.atan2(p2.y - p1.y, segmentWidth);
       
       // If player tried to jump while in margin, trigger it now
-      if (this.keys.space) {
+      if (this.keys.space || this.inputBuffer > 0) {
         this.jump();
       }
       
@@ -201,11 +198,11 @@ export class GameEngine {
     const lastPoint = this.terrainPoints[this.terrainPoints.length - 1];
     if (lastPoint.x - this.state.distance < this.width + 400) {
       const x = lastPoint.x + 60;
-      let y = lastPoint.y + (Math.random() - 0.5) * 120; // Natural heights
+      let y = lastPoint.y + (Math.random() - 0.5) * 90; // Natural heights
       
-      // Keep within bounds
-      if (y < this.height * 0.3) y = this.height * 0.3;
-      if (y > this.height * 0.8) y = this.height * 0.8;
+      // Keep within bounds - lowered
+      if (y < this.height * 0.5) y = this.height * 0.5;
+      if (y > this.height * 0.9) y = this.height * 0.9;
       
       this.terrainPoints.push({ x, y });
       
