@@ -50,6 +50,8 @@ export class GameEngine {
 
   // Inputs
   keys: { space: boolean } = { space: false };
+  inputBuffer: number = 0;
+  readonly INPUT_BUFFER_TIME = 10; // Frames to buffer a jump input
   
   // Callbacks
   onGameOver?: (score: number) => void;
@@ -121,19 +123,25 @@ export class GameEngine {
   }
 
   jump() {
-    if (this.player.grounded) {
+    if (this.player.grounded || this.inputBuffer > 0) {
       this.player.dy = this.JUMP_FORCE;
       // Minimal speed boost on jump
       this.state.speed += 0.1;
       if (this.state.speed > this.MAX_SPEED) this.state.speed = this.MAX_SPEED;
       
       this.player.grounded = false;
+      this.inputBuffer = 0; // Clear buffer
       this.createParticles(this.player.x, this.player.y + 10, 10, '#fff');
+    } else {
+      // Buffer the jump if not grounded
+      this.inputBuffer = this.INPUT_BUFFER_TIME;
     }
   }
 
   update() {
     if (!this.state.isPlaying || this.state.isGameOver) return;
+
+    if (this.inputBuffer > 0) this.inputBuffer--;
 
     this.state.time++;
     this.state.dayNightCycle = (Math.sin(this.state.time * 0.001) + 1) / 2; // Cycle 0-1
@@ -155,7 +163,7 @@ export class GameEngine {
     const slope = (p2.y - p1.y) / segmentWidth;
     
     const SLEIGH_HEIGHT = 15;
-    const COLLISION_MARGIN = 15; // Further increased margin for reliable jumping on downhills
+    const COLLISION_MARGIN = 25; // Significant margin for downhill jumping
     if (this.player.y >= terrainHeight - SLEIGH_HEIGHT - COLLISION_MARGIN) {
       if (this.player.y > terrainHeight - SLEIGH_HEIGHT) {
         this.player.y = terrainHeight - SLEIGH_HEIGHT;
@@ -163,6 +171,11 @@ export class GameEngine {
       this.player.dy = 0;
       this.player.grounded = true;
       this.player.rotation = Math.atan2(p2.y - p1.y, segmentWidth);
+      
+      // If player tried to jump while in margin, trigger it now
+      if (this.keys.space) {
+        this.jump();
+      }
       
       // Speed based on slope - reduced variation
       this.state.speed += slope * 0.3;
@@ -491,14 +504,14 @@ export class GameEngine {
       const waveFreq = 0.0015;
       const waveAmp = 50; // Increased wave amplitude
       
-      this.ctx.moveTo(0, band.y);
-      for (let x = 0; x <= this.width; x += 40) {
+      this.ctx.moveTo(-100, band.y);
+      for (let x = -100; x <= this.width + 100; x += 40) {
         const y = band.y + Math.sin(x * waveFreq + time * band.speed + i) * waveAmp;
         this.ctx.lineTo(x, y);
       }
       
-      this.ctx.lineTo(this.width, band.y + band.height);
-      this.ctx.lineTo(0, band.y + band.height);
+      this.ctx.lineTo(this.width + 100, band.y + band.height);
+      this.ctx.lineTo(-100, band.y + band.height);
       this.ctx.fill();
     });
     

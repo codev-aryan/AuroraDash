@@ -117,9 +117,8 @@ export default function GameCanvas() {
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.code === 'Space') {
-        if (gameState === 'start' || gameState === 'gameover') {
-          // Optional: Press space to start
-        } else if (gameState === 'playing') {
+        e.preventDefault(); // Prevent scrolling
+        if (gameState === 'playing') {
           engineRef.current?.jump();
           playSound('jump');
         }
