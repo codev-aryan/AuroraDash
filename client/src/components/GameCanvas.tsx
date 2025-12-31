@@ -69,13 +69,12 @@ export default function GameCanvas() {
 
     const scheduleMusic = () => {
       const notes = [261.63, 329.63, 392.00, 523.25]; // C4, E4, G4, C5
-      let nextTime = ctx.currentTime;
       
       const playLoop = () => {
-        if (!isMuted && gameState === 'playing') {
+        if (!isMuted && gameState !== 'gameover') {
           playNote(notes[Math.floor(Math.random() * notes.length)], ctx.currentTime);
         }
-        setTimeout(playLoop, 2000);
+        setTimeout(playLoop, 3000);
       };
       playLoop();
     };
@@ -119,19 +118,18 @@ export default function GameCanvas() {
       if (e.code === 'Space') {
         e.preventDefault(); // Prevent scrolling
         if (gameState === 'playing') {
-          engineRef.current?.jump();
-          // Sound logic moved inside engine or handled better
-          if (engineRef.current?.player.grounded || (engineRef.current?.inputBuffer || 0) > 0) {
+          const jumped = engineRef.current?.jump();
+          if (jumped || (engineRef.current?.inputBuffer || 0) > 0) {
             playSound('jump');
           }
         }
       }
     };
     
-    const handleMouseDown = () => {
+    const handleMouseDown = (e: MouseEvent) => {
       if (gameState === 'playing') {
-        engineRef.current?.jump();
-        if (engineRef.current?.player.grounded || (engineRef.current?.inputBuffer || 0) > 0) {
+        const jumped = engineRef.current?.jump();
+        if (jumped || (engineRef.current?.inputBuffer || 0) > 0) {
           playSound('jump');
         }
       }

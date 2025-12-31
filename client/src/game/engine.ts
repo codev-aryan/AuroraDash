@@ -126,12 +126,15 @@ export class GameEngine {
     // Only allow jump if grounded or buffer is active
     if (this.player.grounded) {
       this.player.dy = this.JUMP_FORCE; 
+      this.player.y -= 1; // Slight offset to ensure it's not immediately snapped back to ground
       this.player.grounded = false;
       this.inputBuffer = 0;
       this.createParticles(this.player.x, this.player.y + 10, 15, '#fff');
+      return true;
     } else {
       // Buffer the jump if not grounded
       this.inputBuffer = this.INPUT_BUFFER_TIME;
+      return false;
     }
   }
 
