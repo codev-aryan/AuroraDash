@@ -155,8 +155,11 @@ export class GameEngine {
     const slope = (p2.y - p1.y) / segmentWidth;
     
     const SLEIGH_HEIGHT = 15;
-    if (this.player.y >= terrainHeight - SLEIGH_HEIGHT) {
-      this.player.y = terrainHeight - SLEIGH_HEIGHT;
+    const COLLISION_MARGIN = 5; // Allow jumping if slightly above terrain
+    if (this.player.y >= terrainHeight - SLEIGH_HEIGHT - COLLISION_MARGIN) {
+      if (this.player.y > terrainHeight - SLEIGH_HEIGHT) {
+        this.player.y = terrainHeight - SLEIGH_HEIGHT;
+      }
       this.player.dy = 0;
       this.player.grounded = true;
       this.player.rotation = Math.atan2(p2.y - p1.y, segmentWidth);
