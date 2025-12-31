@@ -123,22 +123,24 @@ export class GameEngine {
   }
 
   jump() {
-    // Only allow jump if grounded or buffer is active
-    if (this.player.grounded) {
-      this.player.dy = this.JUMP_FORCE; // Uniform force
-      this.player.grounded = false;
-      this.inputBuffer = 0;
-      this.createParticles(this.player.x, this.player.y + 10, 10, '#fff');
-    } else {
-      // Buffer the jump if not grounded
-      this.inputBuffer = this.INPUT_BUFFER_TIME;
-    }
+    // Force vertical velocity immediately, bypass complex ground checks if recently grounded
+    this.player.dy = this.JUMP_FORCE; 
+    this.player.grounded = false;
+    this.inputBuffer = 0;
+    this.createParticles(this.player.x, this.player.y + 10, 15, '#fff');
   }
 
   update() {
     if (!this.state.isPlaying || this.state.isGameOver) return;
 
     if (this.inputBuffer > 0) this.inputBuffer--;
+    
+    // Jump input handling
+    if (this.keys.space && this.player.grounded) {
+      this.jump();
+    } else if (this.keys.space) {
+      this.inputBuffer = this.INPUT_BUFFER_TIME;
+    }
 
     this.state.time++;
     this.state.dayNightCycle = (Math.sin(this.state.time * 0.001) + 1) / 2; // Cycle 0-1
@@ -464,14 +466,23 @@ export class GameEngine {
     });
     this.ctx.globalAlpha = 1;
 
-    // Foreground Snow (Increased density)
+    // Foreground Snow (Randomized natural pattern)
     this.ctx.fillStyle = 'rgba(255, 255, 255, 0.6)';
     const tTime = Date.now() / 1000;
-    for(let i=0; i<150; i++) { // Increased from 50 to 150
-      const sx = (i * 123.45 + tTime * 50) % this.width;
-      const sy = (i * 987.65 + tTime * 80) % this.height;
+    for(let i=0; i<150; i++) {
+      // Use unique pseudo-random seeds per particle
+      const seedX = (i * 154.123);
+      const seedY = (i * 721.456);
+      const speedX = 30 + (Math.sin(i) * 20);
+      const speedY = 60 + (Math.cos(i) * 30);
+      
+      const sx = (seedX + tTime * speedX) % this.width;
+      const sy = (seedY + tTime * speedY) % this.height;
+      
       this.ctx.beginPath();
-      this.ctx.arc(sx, sy, 2, 0, Math.PI * 2);
+      // Vary particle sizes slightly
+      const size = 1.5 + (Math.sin(i * 0.5) + 1);
+      this.ctx.arc(sx, sy, size, 0, Math.PI * 2);
       this.ctx.fill();
     }
   }
