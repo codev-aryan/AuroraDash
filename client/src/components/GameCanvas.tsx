@@ -120,7 +120,10 @@ export default function GameCanvas() {
         e.preventDefault(); // Prevent scrolling
         if (gameState === 'playing') {
           engineRef.current?.jump();
-          playSound('jump');
+          // Sound logic moved inside engine or handled better
+          if (engineRef.current?.player.grounded || (engineRef.current?.inputBuffer || 0) > 0) {
+            playSound('jump');
+          }
         }
       }
     };
@@ -128,7 +131,9 @@ export default function GameCanvas() {
     const handleMouseDown = () => {
       if (gameState === 'playing') {
         engineRef.current?.jump();
-        playSound('jump');
+        if (engineRef.current?.player.grounded || (engineRef.current?.inputBuffer || 0) > 0) {
+          playSound('jump');
+        }
       }
     };
 

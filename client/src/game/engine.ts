@@ -123,11 +123,16 @@ export class GameEngine {
   }
 
   jump() {
-    // Force vertical velocity immediately, bypass complex ground checks if recently grounded
-    this.player.dy = this.JUMP_FORCE; 
-    this.player.grounded = false;
-    this.inputBuffer = 0;
-    this.createParticles(this.player.x, this.player.y + 10, 15, '#fff');
+    // Only allow jump if grounded or buffer is active
+    if (this.player.grounded) {
+      this.player.dy = this.JUMP_FORCE; 
+      this.player.grounded = false;
+      this.inputBuffer = 0;
+      this.createParticles(this.player.x, this.player.y + 10, 15, '#fff');
+    } else {
+      // Buffer the jump if not grounded
+      this.inputBuffer = this.INPUT_BUFFER_TIME;
+    }
   }
 
   update() {
@@ -135,11 +140,9 @@ export class GameEngine {
 
     if (this.inputBuffer > 0) this.inputBuffer--;
     
-    // Jump input handling
-    if (this.keys.space && this.player.grounded) {
+    // Auto-trigger jump from buffer
+    if (this.player.grounded && (this.keys.space || this.inputBuffer > 0)) {
       this.jump();
-    } else if (this.keys.space) {
-      this.inputBuffer = this.INPUT_BUFFER_TIME;
     }
 
     this.state.time++;
