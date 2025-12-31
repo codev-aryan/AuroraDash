@@ -123,8 +123,8 @@ export class GameEngine {
   jump() {
     if (this.player.grounded) {
       this.player.dy = this.JUMP_FORCE;
-      // Reduced forward momentum on jump for better control
-      this.state.speed += 1;
+      // Minimal speed boost on jump
+      this.state.speed += 0.1;
       if (this.state.speed > this.MAX_SPEED) this.state.speed = this.MAX_SPEED;
       
       this.player.grounded = false;
@@ -155,7 +155,7 @@ export class GameEngine {
     const slope = (p2.y - p1.y) / segmentWidth;
     
     const SLEIGH_HEIGHT = 15;
-    const COLLISION_MARGIN = 5; // Allow jumping if slightly above terrain
+    const COLLISION_MARGIN = 15; // Further increased margin for reliable jumping on downhills
     if (this.player.y >= terrainHeight - SLEIGH_HEIGHT - COLLISION_MARGIN) {
       if (this.player.y > terrainHeight - SLEIGH_HEIGHT) {
         this.player.y = terrainHeight - SLEIGH_HEIGHT;
@@ -313,9 +313,8 @@ export class GameEngine {
     });
 
     // Aurora (Procedural)
-    // Removed t < 0.5 check to ensure it's always visible if needed, 
-    // or adjusted to be more prominent
-    const auroraAlpha = 0.4; 
+    // Even more prominent aurora
+    const auroraAlpha = 0.85; 
     this.drawAurora(auroraAlpha);
 
     // Terrain
@@ -473,24 +472,24 @@ export class GameEngine {
     
     const time = Date.now() * 0.001;
     
-    // Multi-layered horizontal bands with soft gradients
+    // Multi-layered horizontal bands with soft gradients - Made more vibrant
     const bands = [
-      { y: 50, color: '#22c55e', speed: 0.3 }, // Green
-      { y: 100, color: '#a855f7', speed: 0.2 }, // Purple
-      { y: 150, color: '#38bdf8', speed: 0.4 }  // Cyan
+      { y: 60, color: '#22c55e', speed: 0.3, height: 120 }, // Green
+      { y: 120, color: '#a855f7', speed: 0.2, height: 150 }, // Purple
+      { y: 180, color: '#38bdf8', speed: 0.4, height: 100 }  // Cyan
     ];
 
     bands.forEach((band, i) => {
-      const gradient = this.ctx.createLinearGradient(0, band.y - 40, 0, band.y + 40);
+      const gradient = this.ctx.createLinearGradient(0, band.y - band.height/2, 0, band.y + band.height/2);
       gradient.addColorStop(0, 'rgba(0,0,0,0)');
-      gradient.addColorStop(0.5, band.color + '44'); // 0x44 alpha
+      gradient.addColorStop(0.5, band.color + '88'); // 0x88 alpha for more prominence
       gradient.addColorStop(1, 'rgba(0,0,0,0)');
 
       this.ctx.fillStyle = gradient;
       this.ctx.beginPath();
       
-      const waveFreq = 0.002;
-      const waveAmp = 30;
+      const waveFreq = 0.0015;
+      const waveAmp = 50; // Increased wave amplitude
       
       this.ctx.moveTo(0, band.y);
       for (let x = 0; x <= this.width; x += 40) {
@@ -498,8 +497,8 @@ export class GameEngine {
         this.ctx.lineTo(x, y);
       }
       
-      this.ctx.lineTo(this.width, band.y + 100);
-      this.ctx.lineTo(0, band.y + 100);
+      this.ctx.lineTo(this.width, band.y + band.height);
+      this.ctx.lineTo(0, band.y + band.height);
       this.ctx.fill();
     });
     

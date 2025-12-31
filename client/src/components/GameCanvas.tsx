@@ -177,8 +177,8 @@ export default function GameCanvas() {
             exit={{ opacity: 0 }}
             className="absolute inset-0 flex items-center justify-center bg-black/40 backdrop-blur-sm z-20"
           >
-            <div className="text-center space-y-8 p-8 max-w-md w-full">
-              <h1 className="text-6xl md:text-8xl font-display text-transparent bg-clip-text bg-gradient-to-br from-white via-primary to-purple-400 drop-shadow-lg filter">
+            <div className="text-center space-y-8 p-8 max-w-2xl w-full">
+              <h1 className="text-6xl md:text-9xl font-display text-transparent bg-clip-text bg-gradient-to-br from-white via-primary to-purple-400 drop-shadow-lg filter px-8 py-2">
                 AuroraDash
               </h1>
               
