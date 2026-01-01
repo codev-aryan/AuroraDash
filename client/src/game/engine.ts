@@ -269,12 +269,12 @@ export class GameEngine {
 
       // Spawn Power-ups
       const timeSinceLastPowerup = this.state.time - this.lastPowerupTime;
-      if (Math.random() < 0.015 && this.state.distance > 800 && timeSinceLastPowerup > 5 * 60) {
+      if (Math.random() < 0.025 && this.state.distance > 800 && timeSinceLastPowerup > 5 * 60) {
         this.lastPowerupTime = this.state.time;
         this.powerups.push({
           x: x,
           y: y - 100, // Jump height
-          type: Math.random() > 0.85 ? 'firewall' : 'coffee', // Firewall even rarer
+          type: Math.random() > 0.33 ? 'coffee' : 'firewall', // 1/3 chance for firewall (1 shield for every 2 coffee)
           collected: false
         });
       }
