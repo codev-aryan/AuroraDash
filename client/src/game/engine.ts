@@ -539,11 +539,11 @@ export class GameEngine {
     this.ctx.lineWidth = 1;
     this.ctx.beginPath();
     this.ctx.moveTo(20, 2);
-    this.ctx.lineTo(40, -5);
+    this.ctx.lineTo(35, -5);
     this.ctx.stroke();
 
     // Yellow Rubber Duck
-    this.ctx.translate(45, -5); // Position duck in front
+    this.ctx.translate(40, -5); // Position duck in front
     
     // Duck Body
     this.ctx.fillStyle = '#facc15'; // Yellow

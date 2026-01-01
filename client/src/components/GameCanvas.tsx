@@ -193,9 +193,9 @@ export default function GameCanvas() {
               </h1>
               
               <div className="bg-card/50 border border-white/10 p-6 rounded-2xl backdrop-blur-md shadow-2xl">
-                <p className="text-lg text-white/80 mb-6 font-body">
-                  Tap or Spacebar to jump over obstacles.<br/>
-                  Slide down slopes for speed!
+                <p className="text-lg text-white/80 mb-6 font-body whitespace-pre-line">
+                  Welcome to the chill zone. No deadlines here.{"\n"}
+                  Tap or Spacebar to debug.
                 </p>
                 <Button 
                   onClick={startGame}
@@ -217,9 +217,9 @@ export default function GameCanvas() {
           >
             <div className="bg-card border border-white/10 p-8 rounded-3xl shadow-2xl max-w-lg w-full m-4">
               <div className="text-center mb-8">
-                <h2 className="text-5xl font-display text-white mb-2">Game Over</h2>
+                <h2 className="text-5xl font-display text-red-500 mb-2">Uncaught ReferenceError</h2>
                 <div className="text-7xl font-bold text-primary my-4">{score}</div>
-                <p className="text-white/60">meters traveled</p>
+                <p className="text-white/60">Skill not found. Drink more coffee.</p>
               </div>
 
               <div className="grid grid-cols-1 gap-4">
@@ -227,7 +227,7 @@ export default function GameCanvas() {
                   onClick={startGame}
                   className="py-6 text-lg font-bold bg-gradient-to-r from-primary to-purple-500 hover:scale-[1.02] transition-transform text-primary-foreground"
                 >
-                  <RotateCcw className="mr-2" /> Play Again
+                  <RotateCcw className="mr-2" /> git reset --hard
                 </Button>
               </div>
             </div>
