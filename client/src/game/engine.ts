@@ -36,7 +36,7 @@ export class GameEngine {
   readonly FRICTION = 0.99;
   readonly BOOST = 0.2;
   readonly MAX_SPEED = 12; 
-  readonly JUMP_FORCE = -11; // Slightly increased from -10 for better push
+  readonly JUMP_FORCE = -12.5; // Slightly increased for more height
   
   // Entities
   player: { x: number; y: number; dy: number; rotation: number; grounded: boolean } = {
@@ -384,23 +384,36 @@ export class GameEngine {
         this.ctx.arc(x, y - 60, 9, 0, Math.PI * 2);
         this.ctx.fill();
 
-        // Star on top
+        // Star on top (Glowing)
+        this.ctx.shadowBlur = 10;
+        this.ctx.shadowColor = '#facc15';
         this.ctx.fillStyle = '#facc15';
         this.ctx.beginPath();
-        this.ctx.arc(x, y - 70, 4, 0, Math.PI * 2);
+        this.ctx.arc(x, y - 72, 5, 0, Math.PI * 2);
         this.ctx.fill();
+        this.ctx.shadowBlur = 0;
 
-        // Simple baubles
+        // More baubles and lights
         const time = Date.now() * 0.005;
-        const colors = ['#ef4444', '#3b82f6', '#facc15'];
-        for (let i = 0; i < 3; i++) {
-          this.ctx.fillStyle = colors[i];
-          const ox = Math.sin(time + i) * 10;
-          const oy = Math.cos(time + i) * 5;
+        const colors = ['#ef4444', '#3b82f6', '#facc15', '#ffffff', '#ec4899'];
+        for (let i = 0; i < 8; i++) {
+          this.ctx.fillStyle = colors[i % colors.length];
+          const radius = 15 - (i * 1.5);
+          const angle = time + (i * Math.PI * 0.5);
+          const ox = Math.sin(angle) * radius;
+          const oy = Math.cos(angle * 0.5) * 5;
           this.ctx.beginPath();
-          this.ctx.arc(x + ox, y - 35 - i * 15 + oy, 2, 0, Math.PI * 2);
+          this.ctx.arc(x + ox, y - 25 - i * 6 + oy, 2.5, 0, Math.PI * 2);
           this.ctx.fill();
         }
+
+        // Tinsel/Garland effect
+        this.ctx.strokeStyle = 'rgba(255, 255, 255, 0.3)';
+        this.ctx.lineWidth = 1;
+        this.ctx.beginPath();
+        this.ctx.moveTo(x - 15, y - 25);
+        this.ctx.quadraticCurveTo(x, y - 15, x + 15, y - 25);
+        this.ctx.stroke();
       }
     });
 
