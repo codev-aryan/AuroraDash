@@ -360,6 +360,12 @@ export class GameEngine {
         this.ctx.strokeStyle = 'rgba(255,255,255,0.2)';
         this.ctx.lineWidth = 2;
         this.ctx.stroke();
+
+        // 404 Text
+        this.ctx.fillStyle = 'rgba(255, 255, 255, 0.8)';
+        this.ctx.font = 'bold 14px sans-serif';
+        this.ctx.textAlign = 'center';
+        this.ctx.fillText('404', x, y - 5);
       } else {
         // Xmas Tree (Taller tiered style)
         // Trunk
@@ -417,7 +423,7 @@ export class GameEngine {
       }
     });
 
-    // Player (Santa Sleigh)
+    // Player (Duck pulling Sleigh)
     this.ctx.save();
     this.ctx.translate(this.player.x, this.player.y);
     this.ctx.rotate(this.player.rotation);
@@ -428,46 +434,40 @@ export class GameEngine {
     this.ctx.roundRect(-20, 0, 40, 4, 2);
     this.ctx.fill();
     
-    // Santa Body (Tilted forward slightly)
-    this.ctx.fillStyle = '#ef4444';
+    // Rope
+    this.ctx.strokeStyle = '#d4d4d8';
+    this.ctx.lineWidth = 1;
     this.ctx.beginPath();
-    this.ctx.ellipse(-2, -8, 10, 12, 0.2, 0, Math.PI * 2);
+    this.ctx.moveTo(20, 2);
+    this.ctx.lineTo(40, -5);
+    this.ctx.stroke();
+
+    // Yellow Rubber Duck
+    this.ctx.translate(45, -5); // Position duck in front
+    
+    // Duck Body
+    this.ctx.fillStyle = '#facc15'; // Yellow
+    this.ctx.beginPath();
+    this.ctx.ellipse(0, 0, 12, 10, 0, 0, Math.PI * 2);
     this.ctx.fill();
 
-    // Belt
-    this.ctx.fillStyle = '#000';
-    this.ctx.fillRect(-10, -8, 18, 3);
-
-    // Beard (Proper fluffy beard)
-    this.ctx.fillStyle = '#fff';
+    // Duck Head
     this.ctx.beginPath();
-    this.ctx.arc(8, -10, 6, 0, Math.PI * 2);
-    this.ctx.arc(6, -6, 5, 0, Math.PI * 2);
-    this.ctx.arc(10, -6, 4, 0, Math.PI * 2);
+    this.ctx.arc(8, -8, 7, 0, Math.PI * 2);
     this.ctx.fill();
 
-    // Face
-    this.ctx.fillStyle = '#fecaca';
-    this.ctx.beginPath();
-    this.ctx.arc(8, -14, 5, 0, Math.PI * 2);
-    this.ctx.fill();
-
-    // Eyes
+    // Duck Eye
     this.ctx.fillStyle = '#000';
     this.ctx.beginPath();
-    this.ctx.arc(10, -15, 1, 0, Math.PI * 2);
+    this.ctx.arc(11, -10, 1.5, 0, Math.PI * 2);
     this.ctx.fill();
 
-    // Proper Hat
-    this.ctx.fillStyle = '#ef4444';
+    // Duck Beak
+    this.ctx.fillStyle = '#fb923c'; // Orange
     this.ctx.beginPath();
-    this.ctx.moveTo(4, -18);
-    this.ctx.lineTo(12, -18);
-    this.ctx.quadraticCurveTo(8, -28, 0, -26);
-    this.ctx.fill();
-    this.ctx.fillStyle = '#fff';
-    this.ctx.beginPath();
-    this.ctx.arc(0, -26, 3, 0, Math.PI * 2);
+    this.ctx.moveTo(14, -8);
+    this.ctx.lineTo(20, -7);
+    this.ctx.lineTo(14, -5);
     this.ctx.fill();
     
     this.ctx.restore();
