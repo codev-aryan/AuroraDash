@@ -45,6 +45,7 @@ export class GameEngine {
   
   terrainPoints: Point[] = [];
   obstacles: { x: number; type: 'rock' | 'tree' }[] = [];
+  codeOrbs: { x: number; y: number; value: string; collected: boolean }[] = [];
   particles: { x: number; y: number; vx: number; vy: number; life: number; color: string }[] = [];
   bgStars: { x: number; y: number; size: number; alpha: number }[] = [];
 
@@ -117,6 +118,7 @@ export class GameEngine {
     };
     this.player = { x: 200, y: 0, dy: 0, rotation: 0, grounded: false };
     this.obstacles = [];
+    this.codeOrbs = [];
     this.particles = [];
     this.generateInitialTerrain();
   }
@@ -205,6 +207,17 @@ export class GameEngine {
           type: Math.random() > 0.5 ? 'rock' : 'tree' 
         });
       }
+
+      // Spawn Code Orbs
+      if (Math.random() < 0.2 && this.state.distance > 500) {
+        const orbValues = ['0', '1', '{', '}', ':', '</>'];
+        this.codeOrbs.push({
+          x: x,
+          y: y - 80 - Math.random() * 100, // Spawned above terrain
+          value: orbValues[Math.floor(Math.random() * orbValues.length)],
+          collected: false
+        });
+      }
     }
     
     // Clean up old terrain
@@ -229,6 +242,31 @@ export class GameEngine {
         Math.abs(this.player.y - (this.getTerrainHeightAt(obs.x) - 10)) < 30
       ) {
         this.gameOver();
+      }
+    }
+
+    // Update Code Orbs & Check Collision
+    for (let i = this.codeOrbs.length - 1; i >= 0; i--) {
+      const orb = this.codeOrbs[i];
+      const screenX = orb.x - this.state.distance;
+
+      // Remove off-screen
+      if (screenX < -100) {
+        this.codeOrbs.splice(i, 1);
+        continue;
+      }
+
+      if (!orb.collected) {
+        const dx = screenX - this.player.x;
+        const dy = orb.y - this.player.y;
+        const distance = Math.sqrt(dx * dx + dy * dy);
+
+        if (distance < 40) {
+          orb.collected = true;
+          this.state.score += 50;
+          this.onScoreUpdate?.(this.state.score);
+          this.createParticles(screenX, orb.y, 10, '#00ff00');
+        }
       }
     }
     
@@ -420,6 +458,20 @@ export class GameEngine {
         this.ctx.moveTo(x - 15, y - 25);
         this.ctx.quadraticCurveTo(x, y - 15, x + 15, y - 25);
         this.ctx.stroke();
+      }
+    });
+
+    // Draw Code Orbs
+    this.codeOrbs.forEach(orb => {
+      if (!orb.collected) {
+        const x = orb.x - this.state.distance;
+        this.ctx.fillStyle = '#00ff00';
+        this.ctx.shadowBlur = 15;
+        this.ctx.shadowColor = '#00ff00';
+        this.ctx.font = 'bold 24px monospace';
+        this.ctx.textAlign = 'center';
+        this.ctx.fillText(orb.value, x, orb.y);
+        this.ctx.shadowBlur = 0;
       }
     });
 
