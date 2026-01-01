@@ -51,6 +51,7 @@ export class GameEngine {
   obstacles: { x: number; type: 'rock' | 'tree' }[] = [];
   codeOrbs: { x: number; y: number; value: string; collected: boolean }[] = [];
   powerups: { x: number; y: number; type: 'coffee' | 'firewall'; collected: boolean }[] = [];
+  lastPowerupTime: number = 0;
   particles: { x: number; y: number; vx: number; vy: number; life: number; color: string }[] = [];
   bgStars: { x: number; y: number; size: number; alpha: number }[] = [];
   lastCommitDistance: number = 0;
@@ -255,17 +256,19 @@ export class GameEngine {
       }
 
       // Spawn Power-ups
-      if (Math.random() < 0.03 && this.state.distance > 800) {
+      const timeSinceLastPowerup = this.state.time - this.lastPowerupTime;
+      if (Math.random() < 0.015 && this.state.distance > 800 && timeSinceLastPowerup > 5 * 60) {
+        this.lastPowerupTime = this.state.time;
         this.powerups.push({
           x: x,
           y: y - 100, // Jump height
-          type: Math.random() > 0.7 ? 'firewall' : 'coffee', // Firewall even rarer
+          type: Math.random() > 0.85 ? 'firewall' : 'coffee', // Firewall even rarer
           collected: false
         });
       }
 
       // Spawn Code Orbs
-      if (Math.random() < 0.12 && this.state.distance > 500) {
+      if (Math.random() < 0.08 && this.state.distance > 500) {
         const orbValues = ['{', '}', '</>', ':=', '&&', '||'];
         this.codeOrbs.push({
           x: x,
