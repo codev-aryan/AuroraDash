@@ -172,17 +172,11 @@ export default function GameCanvas() {
         className="block w-full h-full touch-none"
       />
       
-      {/* HUD - Score & Mute */}
+      {/* HUD - Score */}
       <div className="absolute top-6 right-6 flex items-center gap-4 z-10">
         <div className="bg-black/30 backdrop-blur-md px-6 py-2 rounded-full border border-white/10 shadow-xl">
           <span className="text-2xl font-display text-white tracking-widest">{score} m</span>
         </div>
-        <button 
-          onClick={() => setIsMuted(!isMuted)}
-          className="p-3 bg-white/10 hover:bg-white/20 rounded-full transition-colors text-white"
-        >
-          {isMuted ? <VolumeX size={20} /> : <Volume2 size={20} />}
-        </button>
       </div>
 
       <AnimatePresence>
