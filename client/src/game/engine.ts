@@ -12,6 +12,8 @@ export interface GameState {
   isPlaying: boolean;
   time: number;
   dayNightCycle: number; // 0 to 1
+  isInvincible: boolean;
+  invincibilityTimer: number;
 }
 
 export class GameEngine {
@@ -46,6 +48,7 @@ export class GameEngine {
   terrainPoints: Point[] = [];
   obstacles: { x: number; type: 'rock' | 'tree' }[] = [];
   codeOrbs: { x: number; y: number; value: string; collected: boolean }[] = [];
+  powerups: { x: number; y: number; type: 'coffee' | 'firewall'; collected: boolean }[] = [];
   particles: { x: number; y: number; vx: number; vy: number; life: number; color: string }[] = [];
   bgStars: { x: number; y: number; size: number; alpha: number }[] = [];
   lastCommitDistance: number = 0;
@@ -120,7 +123,9 @@ export class GameEngine {
       isGameOver: false,
       isPlaying: true,
       time: 0,
-      dayNightCycle: 0
+      dayNightCycle: 0,
+      isInvincible: false,
+      invincibilityTimer: 0
     };
     this.player = { x: 200, y: 0, dy: 0, rotation: 0, grounded: false };
     this.obstacles = [];
@@ -149,6 +154,14 @@ export class GameEngine {
 
     this.state.time++;
     this.state.dayNightCycle = (Math.sin(this.state.time * 0.001) + 1) / 2; // Cycle 0-1
+    
+    // Invincibility Timer
+    if (this.state.invincibilityTimer > 0) {
+      this.state.invincibilityTimer--;
+      if (this.state.invincibilityTimer === 0) {
+        this.state.isInvincible = false;
+      }
+    }
     
     // Physics
     this.player.dy += this.GRAVITY;
@@ -239,6 +252,16 @@ export class GameEngine {
         });
       }
 
+      // Spawn Power-ups
+      if (Math.random() < 0.05 && this.state.distance > 800) {
+        this.powerups.push({
+          x: x,
+          y: y - 100, // Jump height
+          type: Math.random() > 0.5 ? 'coffee' : 'firewall',
+          collected: false
+        });
+      }
+
       // Spawn Code Orbs
       if (Math.random() < 0.2 && this.state.distance > 500) {
         const orbValues = ['0', '1', '{', '}', ':', '</>'];
@@ -272,7 +295,38 @@ export class GameEngine {
         Math.abs(screenX - this.player.x) < 30 &&
         Math.abs(this.player.y - (this.getTerrainHeightAt(obs.x) - 10)) < 30
       ) {
-        this.gameOver();
+        if (!this.state.isInvincible) {
+          this.gameOver();
+        }
+      }
+    }
+
+    // Update Power-ups & Check Collision
+    for (let i = this.powerups.length - 1; i >= 0; i--) {
+      const pu = this.powerups[i];
+      const screenX = pu.x - this.state.distance;
+
+      if (screenX < -100) {
+        this.powerups.splice(i, 1);
+        continue;
+      }
+
+      if (!pu.collected) {
+        const dx = screenX - this.player.x;
+        const dy = pu.y - this.player.y;
+        const distance = Math.sqrt(dx * dx + dy * dy);
+
+        if (distance < 40) {
+          pu.collected = true;
+          if (pu.type === 'coffee') {
+            this.state.speed += 2;
+            this.createParticles(screenX, pu.y, 15, '#fbbf24');
+          } else if (pu.type === 'firewall') {
+            this.state.isInvincible = true;
+            this.state.invincibilityTimer = 5 * 60; // 5 seconds
+            this.createParticles(screenX, pu.y, 15, '#3b82f6');
+          }
+        }
       }
     }
 
@@ -506,6 +560,16 @@ export class GameEngine {
       }
     });
 
+    // Draw Power-ups
+    this.powerups.forEach(pu => {
+      if (!pu.collected) {
+        const x = pu.x - this.state.distance;
+        this.ctx.font = '24px serif';
+        this.ctx.textAlign = 'center';
+        this.ctx.fillText(pu.type === 'coffee' ? '☕' : '🛡️', x, pu.y);
+      }
+    });
+
     // Player (Duck pulling Sleigh)
     this.ctx.save();
     this.ctx.translate(this.player.x, this.player.y);
@@ -575,6 +639,20 @@ export class GameEngine {
 
     // Yellow Rubber Duck
     this.ctx.translate(40, -5); // Position duck in front
+
+    // Invincibility Shield
+    if (this.state.isInvincible) {
+      this.ctx.save();
+      this.ctx.strokeStyle = '#3b82f6';
+      this.ctx.lineWidth = 3;
+      this.ctx.shadowBlur = 15;
+      this.ctx.shadowColor = '#3b82f6';
+      this.ctx.beginPath();
+      // Shield around both duck and sleigh roughly
+      this.ctx.arc(-20, 0, 45, 0, Math.PI * 2);
+      this.ctx.stroke();
+      this.ctx.restore();
+    }
     
     // Duck Body
     this.ctx.fillStyle = '#facc15'; // Yellow
