@@ -59,7 +59,19 @@ export class GameEngine {
   speechTimer: number = 0;
   thoughtDisplayTimer: number = 0;
   currentThought: string = "";
-  readonly THOUGHTS = ["It works on my machine...", "Is it a bug or a feature?", "Just one more line...", "I use Arch btw"];
+  readonly THOUGHTS = [
+    "It works on my machine...",
+    "Is it a bug or a feature?",
+    "Just one more line...",
+    "I use Arch btw",
+    "git push --force",
+    "Ctrl+C, Ctrl+V",
+    "I speak Binary.",
+    "Wait, did I save?",
+    "Deploying on Friday...",
+    "Who wrote this code? Oh, me.",
+    "Searching Stack Overflow..."
+  ];
 
   // Inputs
   keys: { space: boolean } = { space: false };
