@@ -63,13 +63,12 @@ Follow these steps to get the game running locally.
 
 1.  **Clone the Repository**
     ```bash
-    git clone https://github.com/codev-aryan/codejam-v6.git
+    git clone https://github.com/codev-aryan/AuroraDash.git
     ```
 
 2.  **Navigate to the Project Directory**
-    The game lives inside the `holly-knight` folder.
     ```bash
-    cd codejam-v6/holly-knight
+    cd AuroraDash
     ```
 
 3.  **Install Dependencies**
@@ -84,18 +83,6 @@ Follow these steps to get the game running locally.
 
 5.  **Launch**
     Open your browser and navigate to `http://localhost:5173`.
-
----
-
-## 👥 The Team
-
-* **Aryan Mehta (Team Leader)**
-    * *Role:* Project Architect & Lead Developer
-    * *Contrib:* Core game loop, `Canvas` physics engine, and procedural generation logic.
-
-* **Ishaan Sahi**
-    * *Role:* UI/UX & Game Logic
-    * *Contrib:* Interface design, power-up mechanics (`Coffee`/`Firewall` logic), and developer-themed assets.
 
 ---
 
