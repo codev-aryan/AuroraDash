@@ -266,7 +266,7 @@ export class GameEngine {
 
       // Spawn Code Orbs
       if (Math.random() < 0.12 && this.state.distance > 500) {
-        const orbValues = ['0', '1', '{', '}', ':', '</>'];
+        const orbValues = ['{', '}', '</>', ':=', '&&', '||'];
         this.codeOrbs.push({
           x: x,
           y: y - 80 - Math.random() * 100, // Spawned above terrain
@@ -769,7 +769,8 @@ export class GameEngine {
     }
 
     // Foreground Snow (Randomized natural pattern)
-    this.ctx.fillStyle = 'rgba(255, 255, 255, 0.6)';
+    this.ctx.fillStyle = 'rgba(255, 255, 255, 0.4)';
+    this.ctx.font = '14px monospace';
     const tTime = Date.now() / 1000;
     for(let i=0; i<150; i++) {
       // Use unique pseudo-random seeds per particle
@@ -782,10 +783,8 @@ export class GameEngine {
       const sy = (seedY + tTime * speedY) % this.height;
       
       this.ctx.beginPath();
-      // Vary particle sizes slightly
-      const size = 1.5 + (Math.sin(i * 0.5) + 1);
-      this.ctx.arc(sx, sy, size, 0, Math.PI * 2);
-      this.ctx.fill();
+      const char = i % 2 === 0 ? '0' : '1';
+      this.ctx.fillText(char, sx, sy);
     }
   }
 
