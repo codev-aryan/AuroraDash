@@ -195,8 +195,8 @@ export class GameEngine {
     this.onScoreUpdate?.(this.state.score);
 
     // Git Commit Markers logic
-    if (this.state.distance - this.lastCommitDistance >= 2000) {
-      this.lastCommitDistance = Math.floor(this.state.distance / 2000) * 2000;
+    if (this.state.distance - this.lastCommitDistance >= 2500) {
+      this.lastCommitDistance = Math.floor(this.state.distance / 2500) * 2500;
       this.commitMarkers.push({
         x: this.state.distance + this.width,
         y: this.getTerrainHeightAt(this.state.distance + this.width)
@@ -205,7 +205,7 @@ export class GameEngine {
 
     // Rubber Duck Thoughts logic
     this.speechTimer++;
-    if (this.speechTimer >= 15 * 60) { // 15 seconds at 60fps
+    if (this.speechTimer >= 10 * 60) { // 10 seconds at 60fps
       this.speechTimer = 0;
       this.currentThought = this.THOUGHTS[Math.floor(Math.random() * this.THOUGHTS.length)];
       this.thoughtDisplayTimer = 4 * 60; // 4 seconds
@@ -650,11 +650,11 @@ export class GameEngine {
       if (x > -100 && x < this.width + 100) {
         const y = this.getTerrainHeightAt(marker.x);
         
-        // Text
-        this.ctx.fillStyle = '#22c55e';
-        this.ctx.font = 'bold 12px monospace';
+        // Text in the snow
+        this.ctx.fillStyle = 'rgba(0, 0, 0, 0.2)'; // Subtle "imprint" color
+        this.ctx.font = 'bold 16px monospace';
         this.ctx.textAlign = 'center';
-        this.ctx.fillText("GIT COMMIT", x, y - 15);
+        this.ctx.fillText("GIT COMMIT", x, y + 20);
       }
     });
 
