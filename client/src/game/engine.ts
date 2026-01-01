@@ -253,17 +253,17 @@ export class GameEngine {
       }
 
       // Spawn Power-ups
-      if (Math.random() < 0.05 && this.state.distance > 800) {
+      if (Math.random() < 0.03 && this.state.distance > 800) {
         this.powerups.push({
           x: x,
           y: y - 100, // Jump height
-          type: Math.random() > 0.5 ? 'coffee' : 'firewall',
+          type: Math.random() > 0.7 ? 'firewall' : 'coffee', // Firewall even rarer
           collected: false
         });
       }
 
       // Spawn Code Orbs
-      if (Math.random() < 0.2 && this.state.distance > 500) {
+      if (Math.random() < 0.12 && this.state.distance > 500) {
         const orbValues = ['0', '1', '{', '}', ':', '</>'];
         this.codeOrbs.push({
           x: x,
