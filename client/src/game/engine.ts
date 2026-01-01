@@ -30,7 +30,9 @@ export class GameEngine {
     isGameOver: false,
     isPlaying: false,
     time: 0,
-    dayNightCycle: 0
+    dayNightCycle: 0,
+    isInvincible: false,
+    invincibilityTimer: 0
   };
 
   // Physics constants
@@ -188,7 +190,7 @@ export class GameEngine {
       this.player.rotation = Math.atan2(p2.y - p1.y, segmentWidth);
       
       // Speed based on slope - reduced variation
-      this.state.speed += slope * 0.3;
+      this.state.speed += slope * 0.15;
       if (this.state.speed < 4) this.state.speed = 4;
       if (this.state.speed > this.MAX_SPEED) this.state.speed = this.MAX_SPEED;
     } else {
@@ -319,7 +321,7 @@ export class GameEngine {
         if (distance < 40) {
           pu.collected = true;
           if (pu.type === 'coffee') {
-            this.state.speed += 2;
+            this.state.speed += 3.5;
             this.createParticles(screenX, pu.y, 15, '#fbbf24');
           } else if (pu.type === 'firewall') {
             this.state.isInvincible = true;
