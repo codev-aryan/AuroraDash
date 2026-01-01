@@ -48,6 +48,12 @@ export class GameEngine {
   codeOrbs: { x: number; y: number; value: string; collected: boolean }[] = [];
   particles: { x: number; y: number; vx: number; vy: number; life: number; color: string }[] = [];
   bgStars: { x: number; y: number; size: number; alpha: number }[] = [];
+  lastCommitDistance: number = 0;
+  commitMarkers: { x: number; y: number }[] = [];
+  speechTimer: number = 0;
+  thoughtDisplayTimer: number = 0;
+  currentThought: string = "";
+  readonly THOUGHTS = ["It works on my machine...", "Is it a bug or a feature?", "Just one more line..."];
 
   // Inputs
   keys: { space: boolean } = { space: false };
@@ -120,6 +126,11 @@ export class GameEngine {
     this.obstacles = [];
     this.codeOrbs = [];
     this.particles = [];
+    this.lastCommitDistance = 0;
+    this.commitMarkers = [];
+    this.speechTimer = 0;
+    this.thoughtDisplayTimer = 0;
+    this.currentThought = "";
     this.generateInitialTerrain();
   }
 
@@ -182,6 +193,26 @@ export class GameEngine {
     this.state.distance += this.state.speed;
     this.state.score = Math.floor(this.state.distance / 10);
     this.onScoreUpdate?.(this.state.score);
+
+    // Git Commit Markers logic
+    if (this.state.distance - this.lastCommitDistance >= 1000) {
+      this.lastCommitDistance = Math.floor(this.state.distance / 1000) * 1000;
+      this.commitMarkers.push({
+        x: this.state.distance + this.width,
+        y: this.getTerrainHeightAt(this.state.distance + this.width)
+      });
+    }
+
+    // Rubber Duck Thoughts logic
+    this.speechTimer++;
+    if (this.speechTimer >= 30 * 60) { // 30 seconds at 60fps
+      this.speechTimer = 0;
+      this.currentThought = this.THOUGHTS[Math.floor(Math.random() * this.THOUGHTS.length)];
+      this.thoughtDisplayTimer = 4 * 60; // 4 seconds
+    }
+    if (this.thoughtDisplayTimer > 0) {
+      this.thoughtDisplayTimer--;
+    }
 
     // Generate new terrain
     const lastPoint = this.terrainPoints[this.terrainPoints.length - 1];
@@ -571,6 +602,37 @@ export class GameEngine {
     this.ctx.fill();
     
     this.ctx.restore();
+
+    // Duck Thought Bubble
+    if (this.thoughtDisplayTimer > 0) {
+      this.ctx.save();
+      // Position above the duck (which is translated to 40, -5 from player)
+      this.ctx.translate(this.player.x + 40, this.player.y - 45);
+      
+      this.ctx.font = '12px sans-serif';
+      const metrics = this.ctx.measureText(this.currentThought);
+      const padding = 8;
+      const w = metrics.width + padding * 2;
+      const h = 24;
+
+      this.ctx.fillStyle = 'white';
+      this.ctx.beginPath();
+      this.ctx.roundRect(-w/2, -h, w, h, 6);
+      this.ctx.fill();
+
+      // Bubble pointer
+      this.ctx.beginPath();
+      this.ctx.moveTo(-5, 0);
+      this.ctx.lineTo(5, 0);
+      this.ctx.lineTo(0, 5);
+      this.ctx.closePath();
+      this.ctx.fill();
+
+      this.ctx.fillStyle = 'black';
+      this.ctx.textAlign = 'center';
+      this.ctx.fillText(this.currentThought, 0, -h/2 + 4);
+      this.ctx.restore();
+    }
     
     // Particles
     this.particles.forEach(p => {
@@ -581,6 +643,28 @@ export class GameEngine {
       this.ctx.fill();
     });
     this.ctx.globalAlpha = 1;
+
+    // Draw Git Commit Markers
+    this.commitMarkers.forEach(marker => {
+      const x = marker.x - this.state.distance;
+      if (x > -100 && x < this.width + 100) {
+        const y = this.getTerrainHeightAt(marker.x);
+        
+        // Flag pole
+        this.ctx.strokeStyle = '#22c55e';
+        this.ctx.lineWidth = 3;
+        this.ctx.beginPath();
+        this.ctx.moveTo(x, y);
+        this.ctx.lineTo(x, y - 40);
+        this.ctx.stroke();
+
+        // Text
+        this.ctx.fillStyle = '#22c55e';
+        this.ctx.font = 'bold 12px monospace';
+        this.ctx.textAlign = 'left';
+        this.ctx.fillText("GIT COMMIT", x + 8, y - 35);
+      }
+    });
 
     // Developer Humor Easter Eggs
     if (this.state.isPlaying) {
