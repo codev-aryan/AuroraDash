@@ -348,41 +348,59 @@ export class GameEngine {
       if (obs.type === 'rock') {
         this.ctx.fillStyle = '#64748b';
         this.ctx.beginPath();
-        // More "stone" like shape (trapezoid/irregular)
-        this.ctx.moveTo(x - 20, y);
-        this.ctx.lineTo(x - 15, y - 18);
-        this.ctx.lineTo(x + 15, y - 22);
-        this.ctx.lineTo(x + 22, y);
+        // Stone partially buried in snow
+        this.ctx.moveTo(x - 25, y + 10);
+        this.ctx.lineTo(x - 15, y - 25);
+        this.ctx.lineTo(x + 15, y - 30);
+        this.ctx.lineTo(x + 25, y + 10);
         this.ctx.closePath();
         this.ctx.fill();
         
-        // Stone details (cracks/shadows)
-        this.ctx.strokeStyle = 'rgba(0,0,0,0.2)';
+        // Stone highlights
+        this.ctx.strokeStyle = 'rgba(255,255,255,0.2)';
         this.ctx.lineWidth = 2;
         this.ctx.stroke();
       } else {
-        // Tree (Tiered circular style like the image)
-        // Trunk - moved slightly up to be visible in snow
+        // Xmas Tree (Taller tiered style)
+        // Trunk
         this.ctx.fillStyle = '#451a03'; 
-        this.ctx.fillRect(x - 3, y - 15, 6, 15);
+        this.ctx.fillRect(x - 4, y - 20, 8, 20);
 
-        // Circular tiers
+        // Circular tiers with "decorations"
         this.ctx.fillStyle = '#064e3b';
         
         // Bottom tier
         this.ctx.beginPath();
-        this.ctx.arc(x, y - 18, 12, 0, Math.PI * 2);
+        this.ctx.arc(x, y - 25, 18, 0, Math.PI * 2);
         this.ctx.fill();
         
         // Middle tier
         this.ctx.beginPath();
-        this.ctx.arc(x, y - 28, 9, 0, Math.PI * 2);
+        this.ctx.arc(x, y - 45, 14, 0, Math.PI * 2);
         this.ctx.fill();
         
         // Top tier
         this.ctx.beginPath();
-        this.ctx.arc(x, y - 36, 6, 0, Math.PI * 2);
+        this.ctx.arc(x, y - 60, 9, 0, Math.PI * 2);
         this.ctx.fill();
+
+        // Star on top
+        this.ctx.fillStyle = '#facc15';
+        this.ctx.beginPath();
+        this.ctx.arc(x, y - 70, 4, 0, Math.PI * 2);
+        this.ctx.fill();
+
+        // Simple baubles
+        const time = Date.now() * 0.005;
+        const colors = ['#ef4444', '#3b82f6', '#facc15'];
+        for (let i = 0; i < 3; i++) {
+          this.ctx.fillStyle = colors[i];
+          const ox = Math.sin(time + i) * 10;
+          const oy = Math.cos(time + i) * 5;
+          this.ctx.beginPath();
+          this.ctx.arc(x + ox, y - 35 - i * 15 + oy, 2, 0, Math.PI * 2);
+          this.ctx.fill();
+        }
       }
     });
 
