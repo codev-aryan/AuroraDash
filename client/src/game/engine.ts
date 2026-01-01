@@ -650,11 +650,25 @@ export class GameEngine {
       if (x > -100 && x < this.width + 100) {
         const y = this.getTerrainHeightAt(marker.x);
         
-        // Text in the snow
-        this.ctx.fillStyle = '#22c55e'; // Green
-        this.ctx.font = 'bold 16px monospace';
+        // Flag pole
+        this.ctx.strokeStyle = '#22c55e';
+        this.ctx.lineWidth = 2;
+        this.ctx.beginPath();
+        this.ctx.moveTo(x, y);
+        this.ctx.lineTo(x, y - 50);
+        this.ctx.stroke();
+
+        // Oval Box
+        this.ctx.fillStyle = '#22c55e';
+        this.ctx.beginPath();
+        this.ctx.ellipse(x + 40, y - 50, 45, 12, 0, 0, Math.PI * 2);
+        this.ctx.fill();
+
+        // Text
+        this.ctx.fillStyle = '#ffffff';
+        this.ctx.font = 'bold 12px monospace';
         this.ctx.textAlign = 'center';
-        this.ctx.fillText("GIT COMMIT", x, y + 20);
+        this.ctx.fillText("GIT COMMIT", x + 40, y - 46);
       }
     });
 
