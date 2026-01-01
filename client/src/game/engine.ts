@@ -106,7 +106,6 @@ export class GameEngine {
   }
 
   start() {
-    console.log("%cWelcome to the chill zone. No deadlines here.", "background: #222; color: #bada55; padding: 5px; font-size: 16px;");
     this.state = {
       score: 0,
       speed: 5,
@@ -263,7 +262,6 @@ export class GameEngine {
   }
 
   gameOver() {
-    console.error("Uncaught ReferenceError: Skill not found. Drink more coffee to resolve.");
     this.state.isGameOver = true;
     this.state.isPlaying = false;
     this.onGameOver?.(this.state.score);
@@ -531,6 +529,22 @@ export class GameEngine {
       this.ctx.fill();
     });
     this.ctx.globalAlpha = 1;
+
+    // Developer Humor Easter Eggs
+    if (this.state.isPlaying) {
+      this.ctx.fillStyle = 'rgba(255, 255, 255, 0.4)';
+      this.ctx.font = '12px monospace';
+      this.ctx.textAlign = 'left';
+      this.ctx.fillText("Welcome to the chill zone. No deadlines here.", 20, this.height - 20);
+    }
+
+    if (this.state.isGameOver) {
+      this.ctx.fillStyle = '#ef4444';
+      this.ctx.font = 'bold 14px monospace';
+      this.ctx.textAlign = 'center';
+      this.ctx.fillText("Uncaught ReferenceError: Skill not found.", this.width / 2, this.height / 2 + 120);
+      this.ctx.fillText("Drink more coffee to resolve.", this.width / 2, this.height / 2 + 140);
+    }
 
     // Foreground Snow (Randomized natural pattern)
     this.ctx.fillStyle = 'rgba(255, 255, 255, 0.6)';
