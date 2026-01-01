@@ -53,7 +53,7 @@ export class GameEngine {
   speechTimer: number = 0;
   thoughtDisplayTimer: number = 0;
   currentThought: string = "";
-  readonly THOUGHTS = ["It works on my machine...", "Is it a bug or a feature?", "Just one more line..."];
+  readonly THOUGHTS = ["It works on my machine...", "Is it a bug or a feature?", "Just one more line...", "I use Arch btw"];
 
   // Inputs
   keys: { space: boolean } = { space: false };
@@ -651,7 +651,7 @@ export class GameEngine {
         const y = this.getTerrainHeightAt(marker.x);
         
         // Text in the snow
-        this.ctx.fillStyle = 'rgba(0, 0, 0, 0.2)'; // Subtle "imprint" color
+        this.ctx.fillStyle = '#22c55e'; // Green
         this.ctx.font = 'bold 16px monospace';
         this.ctx.textAlign = 'center';
         this.ctx.fillText("GIT COMMIT", x, y + 20);
