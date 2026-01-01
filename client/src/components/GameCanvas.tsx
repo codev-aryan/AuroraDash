@@ -130,10 +130,10 @@ export default function GameCanvas() {
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.code === 'Space') {
-        e.preventDefault(); // Prevent scrolling
+        e.preventDefault(); 
         if (gameState === 'playing') {
           const jumped = engineRef.current?.jump();
-          if (jumped || (engineRef.current?.inputBuffer || 0) > 0) {
+          if (jumped) {
             playSound('jump');
           }
         }
@@ -143,7 +143,7 @@ export default function GameCanvas() {
     const handleMouseDown = (e: MouseEvent) => {
       if (gameState === 'playing') {
         const jumped = engineRef.current?.jump();
-        if (jumped || (engineRef.current?.inputBuffer || 0) > 0) {
+        if (jumped) {
           playSound('jump');
         }
       }

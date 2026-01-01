@@ -50,8 +50,7 @@ export class GameEngine {
 
   // Inputs
   keys: { space: boolean } = { space: false };
-  inputBuffer: number = 0;
-  readonly INPUT_BUFFER_TIME = 10; // Frames to buffer a jump input
+  isOnGround: boolean = false;
   
   // Callbacks
   onGameOver?: (score: number) => void;
@@ -123,30 +122,17 @@ export class GameEngine {
   }
 
   jump() {
-    // Only allow jump if grounded or buffer is active
-    if (this.player.grounded) {
-      this.player.dy = this.JUMP_FORCE; 
-      this.player.y -= 1; // Slight offset to ensure it's not immediately snapped back to ground
-      this.player.grounded = false;
-      this.inputBuffer = 0;
+    if (this.isOnGround) {
+      this.player.dy = this.JUMP_FORCE;
+      this.isOnGround = false;
       this.createParticles(this.player.x, this.player.y + 10, 15, '#fff');
       return true;
-    } else {
-      // Buffer the jump if not grounded
-      this.inputBuffer = this.INPUT_BUFFER_TIME;
-      return false;
     }
+    return false;
   }
 
   update() {
     if (!this.state.isPlaying || this.state.isGameOver) return;
-
-    if (this.inputBuffer > 0) this.inputBuffer--;
-    
-    // Auto-trigger jump from buffer - bypass grounding check if we have enough margin
-    if ((this.player.grounded || this.getTerrainHeightAt(this.player.x) - (this.player.y + 15) < 5) && (this.keys.space || this.inputBuffer > 0)) {
-      this.jump();
-    }
 
     this.state.time++;
     this.state.dayNightCycle = (Math.sin(this.state.time * 0.001) + 1) / 2; // Cycle 0-1
@@ -168,26 +154,19 @@ export class GameEngine {
     const slope = (p2.y - p1.y) / segmentWidth;
     
     const SLEIGH_HEIGHT = 15;
-    const COLLISION_MARGIN = 25; // Significant margin for downhill jumping
+    const COLLISION_MARGIN = 5;
     if (this.player.y >= terrainHeight - SLEIGH_HEIGHT - COLLISION_MARGIN) {
-      if (this.player.y > terrainHeight - SLEIGH_HEIGHT) {
-        this.player.y = terrainHeight - SLEIGH_HEIGHT;
-      }
+      this.player.y = terrainHeight - SLEIGH_HEIGHT;
       this.player.dy = 0;
-      this.player.grounded = true;
+      this.isOnGround = true;
       this.player.rotation = Math.atan2(p2.y - p1.y, segmentWidth);
-      
-      // If player tried to jump while in margin, trigger it now
-      if (this.keys.space || this.inputBuffer > 0) {
-        this.jump();
-      }
       
       // Speed based on slope - reduced variation
       this.state.speed += slope * 0.3;
       if (this.state.speed < 4) this.state.speed = 4;
       if (this.state.speed > this.MAX_SPEED) this.state.speed = this.MAX_SPEED;
     } else {
-      this.player.grounded = false;
+      this.isOnGround = false;
       this.player.rotation += 0.02; // Rotate while in air
     }
     
