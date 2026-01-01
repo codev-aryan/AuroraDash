@@ -106,6 +106,7 @@ export class GameEngine {
   }
 
   start() {
+    console.log("%cWelcome to the chill zone. No deadlines here.", "background: #222; color: #bada55; padding: 5px; font-size: 16px;");
     this.state = {
       score: 0,
       speed: 5,
@@ -262,6 +263,7 @@ export class GameEngine {
   }
 
   gameOver() {
+    console.error("Uncaught ReferenceError: Skill not found. Drink more coffee to resolve.");
     this.state.isGameOver = true;
     this.state.isPlaying = false;
     this.onGameOver?.(this.state.score);
@@ -433,6 +435,54 @@ export class GameEngine {
     this.ctx.beginPath();
     this.ctx.roundRect(-20, 0, 40, 4, 2);
     this.ctx.fill();
+
+    // Santa in the back
+    this.ctx.save();
+    this.ctx.translate(-10, 0); // Position Santa in the back of the sleigh
+
+    // Santa Body (Tilted forward slightly)
+    this.ctx.fillStyle = '#ef4444';
+    this.ctx.beginPath();
+    this.ctx.ellipse(-2, -8, 10, 12, 0.2, 0, Math.PI * 2);
+    this.ctx.fill();
+
+    // Belt
+    this.ctx.fillStyle = '#000';
+    this.ctx.fillRect(-10, -8, 18, 3);
+
+    // Beard (Proper fluffy beard)
+    this.ctx.fillStyle = '#fff';
+    this.ctx.beginPath();
+    this.ctx.arc(8, -10, 6, 0, Math.PI * 2);
+    this.ctx.arc(6, -6, 5, 0, Math.PI * 2);
+    this.ctx.arc(10, -6, 4, 0, Math.PI * 2);
+    this.ctx.fill();
+
+    // Face
+    this.ctx.fillStyle = '#fecaca';
+    this.ctx.beginPath();
+    this.ctx.arc(8, -14, 5, 0, Math.PI * 2);
+    this.ctx.fill();
+
+    // Eyes
+    this.ctx.fillStyle = '#000';
+    this.ctx.beginPath();
+    this.ctx.arc(10, -15, 1, 0, Math.PI * 2);
+    this.ctx.fill();
+
+    // Proper Hat
+    this.ctx.fillStyle = '#ef4444';
+    this.ctx.beginPath();
+    this.ctx.moveTo(4, -18);
+    this.ctx.lineTo(12, -18);
+    this.ctx.quadraticCurveTo(8, -28, 0, -26);
+    this.ctx.fill();
+    this.ctx.fillStyle = '#fff';
+    this.ctx.beginPath();
+    this.ctx.arc(0, -26, 3, 0, Math.PI * 2);
+    this.ctx.fill();
+    
+    this.ctx.restore();
     
     // Rope
     this.ctx.strokeStyle = '#d4d4d8';
