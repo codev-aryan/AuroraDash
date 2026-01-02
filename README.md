@@ -1,94 +1,156 @@
-# ❄️ AuroraDash
+# AuroraDash 🌌
 
-![Project Status](https://img.shields.io/badge/status-active-success.svg)
-![License](https://img.shields.io/badge/license-MIT-blue.svg)
-![Tech](https://img.shields.io/badge/built%20with-React%20%7C%20TypeScript%20%7C%20Canvas-blueviolet)
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
+[![TypeScript](https://img.shields.io/badge/TypeScript-5.0+-3178C6?logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
+[![React](https://img.shields.io/badge/React-18-61DAFB?logo=react&logoColor=black)](https://reactjs.org/)
+[![Status](https://img.shields.io/badge/Status-Experimental-orange)](https://github.com/codev-aryan/AuroraDash)
 
-> **"It works on my machine... and it flows in my mind."**
+An atmospheric, high-fidelity endless runner inspired by the calm, meditative feel of Alto's Adventure. AuroraDash is a creative escape for developers—combining smooth canvas-based gameplay, procedural visuals, and a modern frontend stack to encourage a "flow state."
 
-## 📖 The Story: A Developer's Escape
-**AuroraDash** is a high-fidelity, atmospheric endless runner inspired by the meditative vibes of *Alto's Adventure*.
-
-We know the struggle: The sprint is ending, the `console` is full of red text, and burnout is creeping in. AuroraDash was built for that exact moment. It is a procedural winter sanctuary where you trade high-pressure deadlines for shimmering auroras and soothing soundscapes.
-
-Steer your rubber-duck-powered sleigh through a world of `syntax errors` and `404` boulders. It isn't just a game; it's a rhythmic, chill escape designed to help developers find their "flow state."
+Guide your rubber-duck-powered sleigh through aurora-lit landscapes in this performance-focused, aesthetically-driven experience.
 
 ---
 
-## 🎮 Theme Interpretation: "Games o|x"
-**Theme:** Architecting a game-themed experience.
+## Features
 
-We interpreted the theme by architecting a digital cure for developer fatigue.
-* **Visual Architecture:** We engineered a custom rendering engine that prioritizes hypnotic, fluid motion (parallax snow, aurora gradients) to act as a visual palate cleanser.
-* **The Metaphor:** The gameplay mirrors the developer experience. The obstacles are the bugs we fight daily, but the movement is the grace we strive for. We didn't just build a runner; we architected a **Zen Mode** for your browser.
-
----
-
-## 🕹️ Gameplay Mechanics & Power-ups
-
-Navigate the snowy terrain and use your developer toolkit to survive:
-
-### ☕ The Boost: `Coffee`
-> *Signifies: The Flow State*
-Collecting a `Coffee` cup triggers a temporary speed boost. It simulates that caffeine-induced burst of productivity where code writes itself, allowing you to glide effortlessly past obstacles.
-
-### 🛡️ The Protection: `Firewall`
-> *Signifies: Security & Stability*
-Picking up the shield item activates a `Firewall`. This protective layer wraps your character in a secure shell, allowing you to crash through exactly one `404 Boulder` or `Syntax Error` without breaking the build (ending the run).
-
-### 👾 The Obstacles
-* **`404` Boulders:** Large, immovable rocks representing missing resources.
-* **Syntax Spikes:** Sharp coding errors that must be jumped over.
+🎮 **Smooth Canvas Gameplay** – Fluid endless-runner mechanics built on HTML5 Canvas  
+🌌 **Atmospheric Visuals** – Aurora-inspired procedural aesthetics  
+🦆 **Rubber Duck Sleigh** – A unique, whimsical theme  
+⚡ **High Performance** – Optimized rendering for smooth 60fps gameplay  
+🎧 **Procedural Audio** – Dynamic soundscapes using the Web Audio API  
+🧩 **Modular UI** – Clean, accessible components powered by Radix UI  
+💻 **Developer Flow State** – Designed as a meditative coding break
 
 ---
 
-## 🚀 Tech Stack
+## Tech Stack
 
-We utilized a modern, type-safe stack to ensure performance and developer experience:
+### Frontend
+- **React 18** with **TypeScript**
+- **HTML5 Canvas** for game rendering
+- **Vite** for blazing-fast development and builds
+- **Tailwind CSS** for styling
+- **Radix UI** for accessible component primitives
+- **React Hook Form** for form handling
 
-* **Frontend:** `React 18`, `TypeScript`, `Vite`
-* **Game Engine:** `HTML5 Canvas API` (Custom implementation for fluid physics)
-* **Styling:** `Tailwind CSS`
-* **Animations:** `Framer Motion` (UI Transitions)
-* **State Management:** `TanStack React Query`
-* **Icons:** `Lucide React`
+### Backend
+- **Node.js** + **Express**
+- **WebSockets** (`ws`) for real-time capabilities
+- **Express Sessions** for state management
 
----
+### Tooling
+- **TypeScript** (strict mode)
+- **ESBuild** for fast bundling
+- **PostCSS** + **Autoprefixer**
+- **Cross-Env** for cross-platform scripts
+- **TSX** for TypeScript execution
 
-## ⚙️ Installation & Setup
-
-Follow these steps to get the game running locally.
-
-**Prerequisites:** Node.js (`v18+`)
-
-1.  **Clone the Repository**
-    ```bash
-    git clone https://github.com/codev-aryan/AuroraDash.git
-    ```
-
-2.  **Navigate to the Project Directory**
-    ```bash
-    cd AuroraDash
-    ```
-
-3.  **Install Dependencies**
-    ```bash
-    npm install
-    ```
-
-4.  **Start the Development Server**
-    ```bash
-    npm run dev
-    ```
-
-5.  **Launch**
-    Open your browser and navigate to `http://localhost:5173`.
+### Audio
+- **Web Audio API** for procedural sound generation
 
 ---
 
-## 📜 License
+## Project Structure
 
-This project is Open Source under the **MIT License**.
+```
+AuroraDash/
+├── client/               # Frontend application
+│   ├── public/          # Static assets
+│   ├── src/
+│   │   ├── components/
+│   │   │   ├── GameCanvas.tsx    # Main game rendering component
+│   │   │   └── ui/               # Radix UI components
+│   │   ├── App.tsx
+│   │   ├── main.tsx
+│   │   └── index.css
+│   └── index.html
+├── server/              # Backend server
+│   └── index.ts
+├── scripts/             # Build and utility scripts
+│   └── build.ts
+├── tailwind.config.ts   # Tailwind configuration
+├── vite.config.ts       # Vite configuration
+├── tsconfig.json        # TypeScript configuration
+└── package.json
+```
 
-* **Audio:** Custom procedural audio via `Web Audio API`.
-* **Inspiration:** *Alto's Adventure*.
+---
+
+## Getting Started
+
+### Prerequisites
+
+- **Node.js** 18+ 
+- **npm** or **yarn**
+
+### Installation
+
+1. **Clone the repository**
+   ```bash
+   git clone https://github.com/codev-aryan/AuroraDash.git
+   cd AuroraDash
+   ```
+
+2. **Install dependencies**
+   ```bash
+   npm install
+   ```
+
+3. **Start the development server**
+   ```bash
+   npm run dev
+   ```
+
+4. **Open in your browser**
+   ```
+   http://localhost:5173
+   ```
+
+---
+
+## Available Scripts
+
+| Command | Description |
+|---------|-------------|
+| `npm run dev` | Start the development server with hot reload |
+| `npm run build` | Build optimized production bundle |
+| `npm run start` | Run the production server |
+| `npm run check` | Run TypeScript type checking |
+
+---
+
+## Inspiration
+
+AuroraDash draws inspiration from **Alto's Adventure**—a game celebrated for its serene atmosphere and elegant simplicity. This project explores how meditative gameplay can serve as a creative outlet for developers, combining technical challenges with visual beauty.
+
+The goal is to create a space where code and calm intersect, offering a brief escape that refreshes rather than drains.
+
+---
+
+## Contributing
+
+Contributions are welcome! Whether you're fixing bugs, adding features, or improving documentation, your input helps make AuroraDash better.
+
+### How to Contribute
+
+1. **Fork the repository**
+2. **Create a feature branch** (`git checkout -b feature/amazing-feature`)
+3. **Commit your changes** (`git commit -m 'Add amazing feature'`)
+4. **Push to the branch** (`git push origin feature/amazing-feature`)
+5. **Open a Pull Request**
+
+### Reporting Issues
+
+Found a bug or have a feature request? [Open an issue](https://github.com/codev-aryan/AuroraDash/issues) and let's discuss it.
+
+---
+
+## License
+
+This project is licensed under the **MIT License**. See [LICENSE](LICENSE) for details.
+
+---
+
+## Author
+
+Built by [@codev-aryan](https://github.com/codev-aryan)
