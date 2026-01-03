@@ -147,7 +147,7 @@ Found a bug or have a feature request? [Open an issue](https://github.com/codev-
 
 ## License
 
-This project is licensed under the **MIT License**. See [LICENSE](LICENSE) for details.
+This project is licensed under the **MIT License**.
 
 ---
 
